@@ -1,12 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <defs>
-    <radialGradient id="bg-luna" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#fef3c7"/>
-      <stop offset="100%" stop-color="#fcd34d"/>
-    </radialGradient>
-  </defs>
   <!-- Background -->
-  <circle cx="100" cy="100" r="100" fill="url(#bg-luna)"/>
+  <circle cx="100" cy="100" r="100" fill="#fcd34d"/>
+  <circle cx="100" cy="100" r="80" fill="#fef3c7" opacity="0.5"/>
   <!-- Body -->
   <ellipse cx="100" cy="125" rx="14" ry="20" fill="#a0522d" stroke="#8b4513" stroke-width="1"/>
   <!-- Body stripes -->

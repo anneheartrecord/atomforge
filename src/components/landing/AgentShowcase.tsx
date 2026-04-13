@@ -1,45 +1,45 @@
 import type { AgentConfig } from '../../types';
 
-const agents: (Pick<AgentConfig, 'role' | 'name' | 'title' | 'description' | 'color' | 'avatar'>)[] = [
+const agents: (Pick<AgentConfig, 'role' | 'name' | 'title' | 'description' | 'color'> & { avatar: string })[] = [
   {
     role: 'emma',
     name: 'Emma',
-    avatar: '👩‍🎨',
+    avatar: '/avatars/emma.svg',
     title: 'Product Manager',
     description: 'Breaks down requirements into clear specs, user stories, and acceptance criteria.',
-    color: '#FF6B6B',
+    color: '#f472b6',
   },
   {
     role: 'bob',
     name: 'Bob',
-    avatar: '🧑‍💻',
-    title: 'Frontend Engineer',
-    description: 'Crafts responsive UIs with React, Tailwind, and modern web standards.',
-    color: '#4ECDC4',
+    avatar: '/avatars/bob.svg',
+    title: 'Architect',
+    description: 'Designs system architecture, APIs, and database schemas end-to-end.',
+    color: '#06b6d4',
   },
   {
     role: 'alex',
     name: 'Alex',
-    avatar: '🤖',
-    title: 'Full-Stack Architect',
-    description: 'Designs system architecture, APIs, and database schemas end-to-end.',
-    color: '#4267FF',
+    avatar: '/avatars/alex.svg',
+    title: 'Engineer',
+    description: 'Writes production-ready code across the full stack with modern best practices.',
+    color: '#3b82f6',
   },
   {
     role: 'luna',
     name: 'Luna',
-    avatar: '✨',
-    title: 'UI/UX Designer',
+    avatar: '/avatars/luna.svg',
+    title: 'Designer',
     description: 'Creates stunning visual designs, color palettes, and interaction patterns.',
-    color: '#FFE66D',
+    color: '#f59e0b',
   },
   {
     role: 'sarah',
     name: 'Sarah',
-    avatar: '🔍',
+    avatar: '/avatars/sarah.svg',
     title: 'QA Engineer',
-    description: 'Writes comprehensive tests, catches edge cases, and ensures code quality.',
-    color: '#A78BFA',
+    description: 'Reviews code quality, catches edge cases, and ensures everything works.',
+    color: '#8b5cf6',
   },
 ];
 
@@ -85,10 +85,16 @@ export default function AgentShowcase() {
             >
               {/* Avatar */}
               <div
-                className="flex items-center justify-center rounded-2xl text-2xl"
-                style={{ background: `${agent.color}18`, width: 56, height: 56, marginBottom: 20 }}
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  border: `2px solid ${agent.color}33`,
+                  marginBottom: 20,
+                }}
               >
-                {agent.avatar}
+                <img src={agent.avatar} alt={agent.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
 
               {/* Name */}

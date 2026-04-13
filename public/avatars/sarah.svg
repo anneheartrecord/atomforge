@@ -1,12 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <defs>
-    <radialGradient id="bg-sarah" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#ede9fe"/>
-      <stop offset="100%" stop-color="#c4b5fd"/>
-    </radialGradient>
-  </defs>
   <!-- Background -->
-  <circle cx="100" cy="100" r="100" fill="url(#bg-sarah)"/>
+  <circle cx="100" cy="100" r="100" fill="#c4b5fd"/>
+  <circle cx="100" cy="100" r="80" fill="#ede9fe" opacity="0.5"/>
   <!-- Body -->
   <ellipse cx="100" cy="140" rx="22" ry="28" fill="#6b5b4a" stroke="#5a4a3a" stroke-width="1.2"/>
   <!-- Chest feathers -->
