@@ -32,7 +32,7 @@ export function useChat(): UseChatReturn {
       // 持久化用户消息到 Supabase
       if (projectId) {
         addConversation({
-          project_id: projectId,
+          pid: projectId,
           role: 'user',
           content,
           metadata: {},
@@ -79,7 +79,7 @@ export function useChat(): UseChatReturn {
         // 持久化 assistant 消息到 Supabase
         if (projectId) {
           addConversation({
-            project_id: projectId,
+            pid: projectId,
             role: 'assistant',
             content: fullText,
             metadata: {},

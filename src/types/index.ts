@@ -22,7 +22,7 @@ export interface Project {
 
 export interface Conversation {
   id: string;
-  project_id: string;
+  pid: string;
   role: AgentRole | 'user' | 'assistant' | 'system';
   content: string;
   metadata: Record<string, unknown>;
@@ -31,10 +31,21 @@ export interface Conversation {
 
 export interface Version {
   id: string;
-  project_id: string;
+  pid: string;
   version_number: number;
   files: Record<string, string>;
   preview_html: string;
+  created_at: string;
+}
+
+export interface Artifact {
+  id: string;
+  pid: string;
+  filename: string;
+  filetype: string;
+  content: string;
+  url: string;
+  size_bytes: number;
   created_at: string;
 }
 

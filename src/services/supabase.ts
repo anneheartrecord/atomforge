@@ -1,5 +1,14 @@
 import { supabase } from '../lib/supabaseClient';
-import type { Project, Conversation, Version } from '../types';
+import type { Project, Conversation, Version, Artifact } from '../types';
+
+// ======================== Auth Helper ========================
+
+export async function getCurrentUser() {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  return session?.user ?? null;
+}
 
 // ======================== Projects ========================
 
@@ -62,12 +71,12 @@ export async function deleteProject(id: string): Promise<void> {
 // ======================== Conversations ========================
 
 export async function getConversations(
-  projectId: string,
+  pid: string,
 ): Promise<Conversation[]> {
   const { data, error } = await supabase
     .from('conversations')
     .select('*')
-    .eq('project_id', projectId)
+    .eq('pid', pid)
     .order('created_at', { ascending: true });
 
   if (error)
@@ -90,11 +99,11 @@ export async function addConversation(
 
 // ======================== Versions ========================
 
-export async function getVersions(projectId: string): Promise<Version[]> {
+export async function getVersions(pid: string): Promise<Version[]> {
   const { data, error } = await supabase
     .from('versions')
     .select('*')
-    .eq('project_id', projectId)
+    .eq('pid', pid)
     .order('version_number', { ascending: false });
 
   if (error) throw new Error(`Failed to fetch versions: ${error.message}`);
@@ -112,4 +121,45 @@ export async function createVersion(
 
   if (error) throw new Error(`Failed to create version: ${error.message}`);
   return data as Version;
+}
+
+// ======================== Artifacts ========================
+
+export async function getArtifacts(pid: string): Promise<Artifact[]> {
+  const { data, error } = await supabase
+    .from('artifacts')
+    .select('*')
+    .eq('pid', pid)
+    .order('created_at', { ascending: false });
+
+  if (error) throw new Error(`Failed to fetch artifacts: ${error.message}`);
+  return data as Artifact[];
+}
+
+export async function saveArtifact(
+  pid: string,
+  filename: string,
+  content: string,
+  filetype: string = 'text',
+): Promise<Artifact> {
+  const { data, error } = await supabase
+    .from('artifacts')
+    .insert({
+      pid,
+      filename,
+      content,
+      filetype,
+      size_bytes: new Blob([content]).size,
+    })
+    .select()
+    .single();
+
+  if (error) throw new Error(`Failed to save artifact: ${error.message}`);
+  return data as Artifact;
+}
+
+export async function deleteArtifact(id: string): Promise<void> {
+  const { error } = await supabase.from('artifacts').delete().eq('id', id);
+
+  if (error) throw new Error(`Failed to delete artifact: ${error.message}`);
 }

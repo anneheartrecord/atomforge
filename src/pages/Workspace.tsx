@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Rocket, ChevronDown, Send, Loader2 } from 'lucide-react';
 import ChatPanel from '../components/workspace/ChatPanel';
 import CodeEditor from '../components/workspace/CodeEditor';
@@ -9,6 +10,7 @@ import RaceView from '../components/race/RaceView';
 import { streamGenerateCode } from '../services/gemini';
 import { runTeamPipeline } from '../agents/teamOrchestrator';
 import { runRace } from '../agents/raceRunner';
+import { getConversations, addConversation, saveArtifact } from '../services/supabase';
 import type { ChatMessage, WorkspaceMode, AgentConfig, TeamStep, RaceEntry } from '../types';
 
 // ── Agent 配置 ────────────────────────────────────────────
@@ -181,8 +183,10 @@ function TeamPromptInput({ onSend, isLoading }: { onSend: (msg: string) => void;
 // Workspace 主组件
 // ══════════════════════════════════════════════════════════
 export default function Workspace() {
+  const { id } = useParams<{ id: string }>();
+  const pid = id || '';
   const [mode, setMode] = useState<WorkspaceMode>('engineer');
-  const [messages, setMessages] = useState<ChatMessage[]>(MOCK_MESSAGES);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [files, setFiles] = useState<Record<string, string>>(DEFAULT_FILES);
   const [activeFile, setActiveFile] = useState('index.html');
   const [isLoading, setIsLoading] = useState(false);
@@ -190,6 +194,37 @@ export default function Workspace() {
   const [raceEntries, setRaceEntries] = useState<RaceEntry[]>(MOCK_RACE_ENTRIES);
 
   const { containerRef, leftW, centerW, rightW, onMouseDown } = useDraggablePanel(30, 35);
+
+  // 加载历史对话
+  useEffect(() => {
+    if (!pid) return;
+    let cancelled = false;
+
+    async function loadHistory() {
+      try {
+        const conversations = await getConversations(pid);
+        if (cancelled) return;
+        if (conversations.length > 0) {
+          const loaded: ChatMessage[] = conversations.map((c) => ({
+            id: c.id,
+            role: c.role as ChatMessage['role'],
+            content: c.content,
+            timestamp: c.created_at,
+          }));
+          setMessages(loaded);
+        } else {
+          // 没有历史对话，使用 mock
+          setMessages(MOCK_MESSAGES);
+        }
+      } catch {
+        // Supabase 调用失败，fallback 到 mock
+        setMessages(MOCK_MESSAGES);
+      }
+    }
+
+    loadHistory();
+    return () => { cancelled = true; };
+  }, [pid]);
 
   // 构建预览 HTML（简单拼接）
   const buildPreviewHtml = useCallback(() => {
@@ -205,6 +240,11 @@ export default function Workspace() {
     const userMsg: ChatMessage = { id: crypto.randomUUID(), role: 'user', content, timestamp: new Date().toISOString() };
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
+
+    // 持久化用户消息
+    if (pid) {
+      addConversation({ pid, role: 'user', content, metadata: {} }).catch(console.error);
+    }
 
     if (mode === 'team') {
       // Team mode: run full pipeline
@@ -223,6 +263,10 @@ export default function Workspace() {
           const code = extractHtmlFromResponse(alexStep.output);
           if (code) {
             setFiles(prev => ({ ...prev, 'index.html': code }));
+            // 保存产物到 Supabase
+            if (pid) {
+              saveArtifact(pid, 'index.html', code, 'html').catch(console.error);
+            }
           }
         }
       } catch (err) {
@@ -277,6 +321,15 @@ export default function Workspace() {
       const code = extractHtmlFromResponse(fullResponse);
       if (code) {
         setFiles(prev => ({ ...prev, 'index.html': code }));
+        // 保存产物到 Supabase
+        if (pid) {
+          saveArtifact(pid, 'index.html', code, 'html').catch(console.error);
+        }
+      }
+
+      // 持久化 AI 回复
+      if (pid) {
+        addConversation({ pid, role: 'alex', content: fullResponse, metadata: {} }).catch(console.error);
       }
     } catch (err) {
       setMessages(prev => {
@@ -291,7 +344,7 @@ export default function Workspace() {
     }
 
     setIsLoading(false);
-  }, [mode]);
+  }, [mode, pid]);
 
   const handleContentChange = useCallback((file: string, content: string) => {
     setFiles(prev => ({ ...prev, [file]: content }));

@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, FolderOpen } from 'lucide-react';
 import Header from '../components/layout/Header';
 import ProjectCard from '../components/dashboard/ProjectCard';
 import NewProjectModal from '../components/dashboard/NewProjectModal';
+import * as supabaseService from '../services/supabase';
 import type { Project, WorkspaceMode } from '../types';
 
-// Mock 数据
+// Mock 数据（Demo 模式 fallback）
 const mockProjects: Project[] = [
   {
     id: '1',
@@ -48,28 +49,104 @@ const mockProjects: Project[] = [
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [projects, setProjects] = useState<Project[]>(mockProjects);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [isDemo, setIsDemo] = useState(false);
 
-  const handleCreate = (data: { name: string; description: string; mode: WorkspaceMode }) => {
-    const newProject: Project = {
-      id: crypto.randomUUID(),
-      user_id: 'u1',
-      name: data.name,
-      description: data.description,
-      files: {},
-      preview_html: '',
-      mode: data.mode,
-      status: 'active',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-    setProjects((prev) => [newProject, ...prev]);
+  // 初始化：检查登录状态并拉取项目
+  useEffect(() => {
+    let cancelled = false;
+
+    async function init() {
+      try {
+        const user = await supabaseService.getCurrentUser();
+        if (cancelled) return;
+
+        if (user) {
+          setUserId(user.id);
+          const data = await supabaseService.getProjects(user.id);
+          if (!cancelled) setProjects(data);
+        } else {
+          // 未登录，使用 Demo 模式
+          setIsDemo(true);
+          setProjects(mockProjects);
+        }
+      } catch {
+        // Supabase 调用失败，fallback 到 Demo 模式
+        if (!cancelled) {
+          setIsDemo(true);
+          setProjects(mockProjects);
+        }
+      }
+    }
+
+    init();
+    return () => { cancelled = true; };
+  }, []);
+
+  const handleCreate = async (data: { name: string; description: string; mode: WorkspaceMode }) => {
+    if (isDemo || !userId) {
+      // Demo 模式：本地创建
+      const newProject: Project = {
+        id: crypto.randomUUID(),
+        user_id: userId || 'demo',
+        name: data.name,
+        description: data.description,
+        files: {},
+        preview_html: '',
+        mode: data.mode,
+        status: 'active',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      setProjects((prev) => [newProject, ...prev]);
+      setShowModal(false);
+      return;
+    }
+
+    try {
+      const newProject = await supabaseService.createProject({
+        user_id: userId,
+        name: data.name,
+        description: data.description,
+        files: {},
+        preview_html: '',
+        mode: data.mode,
+        status: 'active',
+      });
+      setProjects((prev) => [newProject, ...prev]);
+    } catch {
+      // Fallback：本地创建
+      const newProject: Project = {
+        id: crypto.randomUUID(),
+        user_id: userId,
+        name: data.name,
+        description: data.description,
+        files: {},
+        preview_html: '',
+        mode: data.mode,
+        status: 'active',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      setProjects((prev) => [newProject, ...prev]);
+    }
     setShowModal(false);
   };
 
-  const handleDelete = (projectId: string) => {
+  const handleDelete = async (projectId: string) => {
+    // 乐观删除：先从 UI 移除
     setProjects((prev) => prev.filter((p) => p.id !== projectId));
+
+    if (!isDemo) {
+      try {
+        await supabaseService.deleteProject(projectId);
+      } catch {
+        // 删除失败时不回滚，因为 Demo 模式下本来就没有远端数据
+        console.error('Failed to delete project from Supabase');
+      }
+    }
   };
 
   const handleClick = (project: Project) => {
@@ -83,12 +160,19 @@ export default function Dashboard() {
       <main className="mx-auto max-w-7xl px-6 pt-24 pb-16">
         {/* Title bar */}
         <div className="mb-8 flex items-center justify-between">
-          <h1
-            className="text-2xl font-bold"
-            style={{ color: 'var(--color-text-primary)' }}
-          >
-            My Projects
-          </h1>
+          <div className="flex items-center gap-3">
+            <h1
+              className="text-2xl font-bold"
+              style={{ color: 'var(--color-text-primary)' }}
+            >
+              My Projects
+            </h1>
+            {isDemo && (
+              <span className="rounded-full px-2.5 py-0.5 text-xs font-medium" style={{ background: 'rgba(251,191,36,0.15)', color: '#f59e0b' }}>
+                Demo Mode
+              </span>
+            )}
+          </div>
           <button
             onClick={() => setShowModal(true)}
             className="flex cursor-pointer items-center gap-2 rounded-full border-none px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 active:scale-[0.98]"
