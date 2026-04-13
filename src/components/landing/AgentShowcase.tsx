@@ -61,13 +61,7 @@ export default function AgentShowcase() {
           let them compete in Race Mode.
         </p>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: 24,
-          }}
-        >
+        <div className="agents-grid">
           {agents.map((agent) => (
             <div
               key={agent.role}

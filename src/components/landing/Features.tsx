@@ -52,7 +52,7 @@ export default function Features() {
           development lifecycle.
         </p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
+        <div className="features-grid">
           {features.map((feature) => (
             <div
               key={feature.title}
