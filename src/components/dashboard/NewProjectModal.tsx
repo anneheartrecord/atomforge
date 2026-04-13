@@ -65,7 +65,7 @@ export default function NewProjectModal({ isOpen, onClose, onCreate }: NewProjec
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="My Awesome App"
-          className="mb-4 w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--color-primary)]"
+          className="mb-5 w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--color-primary)]"
           style={{
             background: 'var(--color-bg-input)',
             borderColor: 'var(--color-border)',

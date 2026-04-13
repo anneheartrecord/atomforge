@@ -68,7 +68,7 @@ export default function FileTree({ files, activeFile, onFileSelect, onAddFile, o
             <div
               key={name}
               onClick={() => onFileSelect(name)}
-              className="flex items-center gap-2 px-3 py-1.5 cursor-pointer group transition-colors"
+              className="flex items-center gap-2 px-4 py-2 cursor-pointer group transition-colors"
               style={{
                 background: active ? '#18181b' : 'transparent',
                 borderLeft: active ? '2px solid #6366f1' : '2px solid transparent',
@@ -93,7 +93,7 @@ export default function FileTree({ files, activeFile, onFileSelect, onAddFile, o
 
         {/* 新建文件输入 */}
         {isAdding && (
-          <div className="flex items-center gap-1 px-3 py-1.5">
+          <div className="flex items-center gap-1 px-4 py-2">
             <File size={14} style={{ color: '#555' }} />
             <input
               autoFocus

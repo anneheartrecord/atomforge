@@ -69,7 +69,7 @@ export default function TeamPipeline({ steps, currentStep }: TeamPipelineProps) 
               </div>
 
               {/* 内容 */}
-              <div className={`flex-1 pb-4 ${isLast ? '' : ''}`}>
+              <div className={`flex-1 pb-6 ${isLast ? '' : ''}`}>
                 <AgentCard
                   agent={step.agent}
                   status={step.status === 'completed' ? 'done' : step.status === 'running' ? 'working' : 'idle'}

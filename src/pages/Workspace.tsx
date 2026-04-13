@@ -338,7 +338,7 @@ export default function Workspace() {
             <button
               key={m}
               onClick={() => setMode(m)}
-              className="px-4 py-1.5 text-xs font-medium rounded-lg transition-all capitalize"
+              className="px-5 py-2 text-xs font-medium rounded-lg transition-all capitalize"
               style={{
                 background: mode === m ? '#6366f1' : 'transparent',
                 color: mode === m ? '#fff' : '#888',
@@ -351,11 +351,11 @@ export default function Workspace() {
 
         {/* 右：操作区 */}
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 px-4 py-1.5 text-xs font-medium rounded-lg transition-colors" style={{ background: '#6366f1' }}>
+          <button className="flex items-center gap-2 px-5 py-2 text-xs font-medium rounded-lg transition-colors" style={{ background: '#6366f1' }}>
             <Rocket size={14} />
             Publish
           </button>
-          <button className="p-1.5 rounded-lg" style={{ background: '#18181b' }}>
+          <button className="p-2 rounded-lg" style={{ background: '#18181b' }}>
             <ChevronDown size={14} />
           </button>
         </div>

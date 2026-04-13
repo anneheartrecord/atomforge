@@ -61,7 +61,7 @@ export default function Features() {
                 background: 'var(--color-bg-card)',
                 border: '1px solid var(--color-border)',
                 borderRadius: 24,
-                padding: '32px 28px',
+                padding: 32,
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = 'var(--color-border-hover)';

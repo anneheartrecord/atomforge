@@ -56,22 +56,22 @@ export default function Preview({ html, title = 'Preview' }: PreviewProps) {
         <div className="flex items-center gap-1">
           <button
             onClick={() => setDevice('desktop')}
-            className="p-1.5 rounded-md transition-colors"
+            className="p-2 rounded-md transition-colors"
             style={{ background: device === 'desktop' ? '#18181b' : 'transparent', color: device === 'desktop' ? '#6366f1' : '#555' }}
           >
             <Monitor size={14} />
           </button>
           <button
             onClick={() => setDevice('mobile')}
-            className="p-1.5 rounded-md transition-colors"
+            className="p-2 rounded-md transition-colors"
             style={{ background: device === 'mobile' ? '#18181b' : 'transparent', color: device === 'mobile' ? '#6366f1' : '#555' }}
           >
             <Smartphone size={14} />
           </button>
-          <button onClick={handleRefresh} className="p-1.5 rounded-md transition-colors hover:bg-white/5" style={{ color: '#555' }}>
+          <button onClick={handleRefresh} className="p-2 rounded-md transition-colors hover:bg-white/5" style={{ color: '#555' }}>
             <RefreshCw size={14} />
           </button>
-          <button onClick={handleFullscreen} className="p-1.5 rounded-md transition-colors hover:bg-white/5" style={{ color: '#555' }}>
+          <button onClick={handleFullscreen} className="p-2 rounded-md transition-colors hover:bg-white/5" style={{ color: '#555' }}>
             <Maximize2 size={14} />
           </button>
         </div>

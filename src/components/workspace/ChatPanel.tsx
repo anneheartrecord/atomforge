@@ -128,7 +128,7 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
 
                   {/* 气泡 */}
                   <div
-                    className="px-3.5 py-2.5 text-sm leading-relaxed"
+                    className="p-4 text-sm leading-relaxed"
                     style={{
                       background: isUser ? '#1a2744' : '#18181b',
                       borderRadius: isUser ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
@@ -154,7 +154,7 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
         {/* 加载中指示 */}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs" style={{ background: '#18181b', color: '#888' }}>
+            <div className="flex items-center gap-2 p-4 rounded-2xl text-xs" style={{ background: '#18181b', color: '#888' }}>
               <Loader2 size={14} className="animate-spin" />
               Thinking…
             </div>
@@ -163,7 +163,7 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
       </div>
 
       {/* ── 输入区 ── */}
-      <div className="px-3 pb-3 pt-1 shrink-0">
+      <div className="p-4 shrink-0">
         {/* 模式切换 */}
         <div className="flex items-center gap-1 mb-2">
           {(['engineer', 'team', 'race'] as WorkspaceMode[]).map(m => (
