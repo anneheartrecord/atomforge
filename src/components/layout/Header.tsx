@@ -1,0 +1,110 @@
+import { Link } from 'react-router-dom';
+import { LayoutDashboard, LogIn } from 'lucide-react';
+import { useState, useEffect } from 'react';
+
+export default function Header() {
+  const [user, setUser] = useState<{ name: string; avatar_url?: string } | null>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('atomforge_user');
+    if (stored) {
+      try {
+        setUser(JSON.parse(stored));
+      } catch {
+        /* ignore */
+      }
+    }
+  }, []);
+
+  return (
+    <header
+      className="glass fixed top-0 left-0 right-0 z-50"
+      style={{ height: 64 }}
+    >
+      <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6">
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2.5 no-underline">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <defs>
+              <linearGradient id="logo-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#4267ff" />
+                <stop offset="0.5" stopColor="#a78bfa" />
+                <stop offset="1" stopColor="#4ecdc4" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M16 2 L28 9 L28 23 L16 30 L4 23 L4 9 Z"
+              stroke="url(#logo-grad)"
+              strokeWidth="2"
+              fill="none"
+            />
+            <circle cx="16" cy="16" r="5" fill="url(#logo-grad)" />
+          </svg>
+          <span
+            className="text-xl font-semibold tracking-tight"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
+            Atom<span className="gradient-text">Forge</span>
+          </span>
+        </Link>
+
+        {/* Nav */}
+        <nav className="flex items-center gap-6">
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-1.5 text-sm no-underline transition-colors duration-200"
+            style={{ color: 'var(--color-text-secondary)' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-text-primary)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-secondary)')}
+          >
+            <LayoutDashboard size={16} />
+            Dashboard
+          </Link>
+
+          {user ? (
+            <div className="flex items-center gap-2">
+              {user.avatar_url ? (
+                <img
+                  src={user.avatar_url}
+                  alt={user.name}
+                  className="h-8 w-8 rounded-full object-cover"
+                  style={{ border: '2px solid var(--color-border)' }}
+                />
+              ) : (
+                <div
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium"
+                  style={{
+                    background: 'var(--color-primary)',
+                    color: '#fff',
+                  }}
+                >
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <span
+                className="text-sm"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                {user.name}
+              </span>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium no-underline transition-all duration-200"
+              style={{
+                background: 'var(--color-primary)',
+                color: '#fff',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--color-primary-hover)')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--color-primary)')}
+            >
+              <LogIn size={16} />
+              Sign In
+            </Link>
+          )}
+        </nav>
+      </div>
+    </header>
+  );
+}
