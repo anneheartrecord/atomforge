@@ -130,9 +130,9 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
                   <div
                     className="p-4 text-sm leading-relaxed"
                     style={{
-                      background: isUser ? '#1a2744' : '#f8fafc',
+                      background: isUser ? 'rgba(59,130,246,0.08)' : '#f8fafc',
                       borderRadius: isUser ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                      color: '#ddd',
+                      color: '#0f172a',
                     }}
                   >
                     {renderMarkdown(msg.content)}

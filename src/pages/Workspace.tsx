@@ -10,17 +10,14 @@ import RaceView from '../components/race/RaceView';
 import { streamGenerateCode } from '../services/gemini';
 import { runTeamPipeline } from '../agents/teamOrchestrator';
 import { runRace } from '../agents/raceRunner';
+import { AGENTS as AGENTS_LIST } from '../agents/types';
 import { getConversations, addConversation, saveArtifact } from '../services/supabase';
 import type { ChatMessage, WorkspaceMode, AgentConfig, TeamStep, RaceEntry } from '../types';
 
-// ── Agent 配置 ────────────────────────────────────────────
-const AGENTS: Record<string, AgentConfig> = {
-  emma: { role: 'emma', name: 'Emma', title: 'Product Manager', description: 'Defines requirements and user stories', color: '#f472b6', avatar: '👩‍💼', systemPrompt: '' },
-  bob:  { role: 'bob',  name: 'Bob',  title: 'Architect',       description: 'Designs system architecture',       color: '#60a5fa', avatar: '🧑‍💻', systemPrompt: '' },
-  alex: { role: 'alex', name: 'Alex', title: 'Engineer',        description: 'Writes production code',             color: '#4ade80', avatar: '👨‍💻', systemPrompt: '' },
-  luna: { role: 'luna', name: 'Luna', title: 'Designer',        description: 'Handles UI/UX and styling',          color: '#c084fc', avatar: '🎨', systemPrompt: '' },
-  sarah:{ role: 'sarah',name: 'Sarah',title: 'QA Engineer',     description: 'Tests and reviews code',             color: '#facc15', avatar: '🔍', systemPrompt: '' },
-};
+// ── 从全局 AGENTS 数组构建 Record，方便按 role 查找 ──────
+const AGENTS: Record<string, AgentConfig> = Object.fromEntries(
+  AGENTS_LIST.map(a => [a.role, a]),
+);
 
 // ── Mock 文件 ─────────────────────────────────────────────
 const DEFAULT_FILES: Record<string, string> = {
@@ -450,6 +447,10 @@ export default function Workspace() {
               const entry = raceEntries.find(e => e.id === id);
               if (entry?.output) {
                 setFiles(prev => ({ ...prev, 'index.html': entry.output }));
+                // 持久化到 Supabase
+                if (pid) {
+                  saveArtifact(pid, 'index.html', entry.output, 'html').catch(console.error);
+                }
                 setMode('engineer');
               }
             }} />

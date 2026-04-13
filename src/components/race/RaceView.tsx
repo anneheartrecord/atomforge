@@ -90,7 +90,7 @@ export default function RaceView({ entries, onSelect }: RaceViewProps) {
                   onClick={() => onSelect(entry.id)}
                   disabled={entry.status !== 'completed'}
                   className="flex items-center gap-1 px-3 py-1 rounded-md text-xs font-medium cursor-pointer border-0 disabled:opacity-30"
-                  style={{ background: '#3b82f6', color: '#0f172a' }}
+                  style={{ background: '#3b82f6', color: '#fff' }}
                 >
                   <Check size={12} />
                   Select
