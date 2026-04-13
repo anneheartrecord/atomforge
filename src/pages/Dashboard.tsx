@@ -100,7 +100,7 @@ export default function Dashboard() {
         </div>
 
         {projects.length > 0 ? (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 20 }}>
             {projects.map((project) => (
               <ProjectCard
                 key={project.id}
