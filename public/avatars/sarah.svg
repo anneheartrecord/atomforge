@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <radialGradient id="bg-sarah" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ede9fe"/>
+      <stop offset="100%" stop-color="#c4b5fd"/>
+    </radialGradient>
+  </defs>
+  <!-- Background -->
+  <circle cx="100" cy="100" r="100" fill="url(#bg-sarah)"/>
+  <!-- Body -->
+  <ellipse cx="100" cy="140" rx="22" ry="28" fill="#6b5b4a" stroke="#5a4a3a" stroke-width="1.2"/>
+  <!-- Chest feathers -->
+  <ellipse cx="100" cy="145" rx="15" ry="20" fill="#f5f0e8" stroke="#e0d5c5" stroke-width="0.8"/>
+  <!-- Chest streaks -->
+  <path d="M92 135 L95 140" stroke="#c0b0a0" stroke-width="0.8" opacity="0.5"/>
+  <path d="M98 133 L100 139" stroke="#c0b0a0" stroke-width="0.8" opacity="0.5"/>
+  <path d="M105 134 L107 140" stroke="#c0b0a0" stroke-width="0.8" opacity="0.5"/>
+  <path d="M94 143 L96 148" stroke="#c0b0a0" stroke-width="0.8" opacity="0.5"/>
+  <path d="M103 142 L105 148" stroke="#c0b0a0" stroke-width="0.8" opacity="0.5"/>
+  <!-- Wings -->
+  <path d="M60 120 Q48 140 52 165 Q56 160 62 148 Q58 135 64 122" fill="#5a4a3a" stroke="#4a3a2a" stroke-width="1"/>
+  <path d="M140 120 Q152 140 148 165 Q144 160 138 148 Q142 135 136 122" fill="#5a4a3a" stroke="#4a3a2a" stroke-width="1"/>
+  <!-- Head -->
+  <ellipse cx="100" cy="78" rx="30" ry="28" fill="#6b5b4a" stroke="#5a4a3a" stroke-width="1.2"/>
+  <!-- Head top / crown feathers -->
+  <path d="M82 55 Q90 42 100 50 Q110 42 118 55" fill="#5a4a3a" stroke="#4a3a2a" stroke-width="1"/>
+  <path d="M88 52 Q95 40 100 46" fill="#5a4a3a" stroke="#4a3a2a" stroke-width="0.8"/>
+  <path d="M112 52 Q105 40 100 46" fill="#5a4a3a" stroke="#4a3a2a" stroke-width="0.8"/>
+  <!-- Face mask - falcon's distinctive markings -->
+  <path d="M85 70 Q100 60 115 70 Q115 88 100 95 Q85 88 85 70Z" fill="#f5f0e8" stroke="#d8cfc0" stroke-width="0.8"/>
+  <!-- Malar stripe (falcon tear marks) -->
+  <path d="M88 78 Q86 88 82 98" fill="none" stroke="#2a2a2a" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M112 78 Q114 88 118 98" fill="none" stroke="#2a2a2a" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Eyes - sharp and focused -->
+  <ellipse cx="92" cy="76" rx="6" ry="6.5" fill="#1a1a1a" stroke="#333" stroke-width="0.5"/>
+  <ellipse cx="108" cy="76" rx="6" ry="6.5" fill="#1a1a1a" stroke="#333" stroke-width="0.5"/>
+  <!-- Eye iris -->
+  <circle cx="92" cy="76" r="4" fill="#4a3520"/>
+  <circle cx="108" cy="76" r="4" fill="#4a3520"/>
+  <!-- Pupils -->
+  <circle cx="93" cy="76" r="2.5" fill="#1a1a1a"/>
+  <circle cx="109" cy="76" r="2.5" fill="#1a1a1a"/>
+  <!-- Eye highlights -->
+  <circle cx="90" cy="74" r="2" fill="white" opacity="0.85"/>
+  <circle cx="106" cy="74" r="2" fill="white" opacity="0.85"/>
+  <circle cx="94" cy="78" r="1" fill="white" opacity="0.5"/>
+  <circle cx="110" cy="78" r="1" fill="white" opacity="0.5"/>
+  <!-- Beak - hooked falcon beak -->
+  <path d="M97 84 Q100 82 103 84 Q101 90 100 93 Q99 90 97 84Z" fill="#4a4a4a" stroke="#333" stroke-width="0.8"/>
+  <path d="M98 92 Q100 95 102 92" fill="#4a4a4a" stroke="#333" stroke-width="0.5"/>
+  <!-- Blush -->
+  <ellipse cx="80" cy="86" rx="5" ry="3" fill="#8b5cf6" opacity="0.2"/>
+  <ellipse cx="120" cy="86" rx="5" ry="3" fill="#8b5cf6" opacity="0.2"/>
+  <!-- Talons -->
+  <path d="M88 166 L84 175 M88 166 L88 176 M88 166 L92 175" stroke="#4a4a4a" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  <path d="M112 166 L108 175 M112 166 L112 176 M112 166 L116 175" stroke="#4a4a4a" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  <!-- Tail feathers -->
+  <path d="M90 165 Q88 175 85 182" stroke="#5a4a3a" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <path d="M100 167 Q100 177 100 185" stroke="#5a4a3a" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <path d="M110 165 Q112 175 115 182" stroke="#5a4a3a" stroke-width="2" stroke-linecap="round" fill="none"/>
+</svg>

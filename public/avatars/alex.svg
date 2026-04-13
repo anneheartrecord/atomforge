@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <radialGradient id="bg-alex" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#dbeafe"/>
+      <stop offset="100%" stop-color="#93c5fd"/>
+    </radialGradient>
+  </defs>
+  <!-- Background -->
+  <circle cx="100" cy="100" r="100" fill="url(#bg-alex)"/>
+  <!-- Head/body (octopus is mostly head!) -->
+  <ellipse cx="100" cy="80" rx="42" ry="40" fill="#e8a0c0" stroke="#d4789a" stroke-width="1.5"/>
+  <!-- Spots -->
+  <circle cx="78" cy="68" r="4" fill="#d4789a" opacity="0.3"/>
+  <circle cx="120" cy="72" r="3" fill="#d4789a" opacity="0.3"/>
+  <circle cx="130" cy="60" r="2.5" fill="#d4789a" opacity="0.25"/>
+  <circle cx="72" cy="82" r="2" fill="#d4789a" opacity="0.25"/>
+  <!-- Eyes -->
+  <ellipse cx="85" cy="78" rx="10" ry="11" fill="white" stroke="#c06888" stroke-width="1"/>
+  <ellipse cx="115" cy="78" rx="10" ry="11" fill="white" stroke="#c06888" stroke-width="1"/>
+  <circle cx="87" cy="79" r="6" fill="#1a1a1a"/>
+  <circle cx="117" cy="79" r="6" fill="#1a1a1a"/>
+  <circle cx="85" cy="76" r="2.5" fill="white" opacity="0.9"/>
+  <circle cx="115" cy="76" r="2.5" fill="white" opacity="0.9"/>
+  <!-- Happy mouth -->
+  <path d="M92 95 Q100 103 108 95" fill="none" stroke="#a05070" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- Blush -->
+  <ellipse cx="72" cy="92" rx="6" ry="3.5" fill="#3b82f6" opacity="0.2"/>
+  <ellipse cx="128" cy="92" rx="6" ry="3.5" fill="#3b82f6" opacity="0.2"/>
+  <!-- Tentacles - 8 of them, wavy -->
+  <!-- Left side -->
+  <path d="M62 108 Q50 130 55 155 Q58 160 60 155 Q56 135 68 115" fill="#dfa0b8" stroke="#d4789a" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M70 115 Q55 140 62 165 Q65 170 67 165 Q62 145 75 122" fill="#dfa0b8" stroke="#d4789a" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M80 118 Q68 145 72 172 Q75 177 77 172 Q74 150 86 126" fill="#dfa0b8" stroke="#d4789a" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M92 120 Q84 148 88 178 Q91 182 93 178 Q90 152 98 128" fill="#dfa0b8" stroke="#d4789a" stroke-width="1.2" stroke-linecap="round"/>
+  <!-- Right side -->
+  <path d="M138 108 Q150 130 145 155 Q142 160 140 155 Q144 135 132 115" fill="#dfa0b8" stroke="#d4789a" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M130 115 Q145 140 138 165 Q135 170 133 165 Q138 145 125 122" fill="#dfa0b8" stroke="#d4789a" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M120 118 Q132 145 128 172 Q125 177 123 172 Q126 150 114 126" fill="#dfa0b8" stroke="#d4789a" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M108 120 Q116 148 112 178 Q109 182 107 178 Q110 152 102 128" fill="#dfa0b8" stroke="#d4789a" stroke-width="1.2" stroke-linecap="round"/>
+  <!-- Suction cups (dots on tentacles) -->
+  <circle cx="56" cy="145" r="2" fill="#c87898" opacity="0.4"/>
+  <circle cx="64" cy="155" r="2" fill="#c87898" opacity="0.4"/>
+  <circle cx="74" cy="162" r="2" fill="#c87898" opacity="0.4"/>
+  <circle cx="89" cy="168" r="2" fill="#c87898" opacity="0.4"/>
+  <circle cx="144" cy="145" r="2" fill="#c87898" opacity="0.4"/>
+  <circle cx="136" cy="155" r="2" fill="#c87898" opacity="0.4"/>
+  <circle cx="126" cy="162" r="2" fill="#c87898" opacity="0.4"/>
+  <circle cx="111" cy="168" r="2" fill="#c87898" opacity="0.4"/>
+</svg>
