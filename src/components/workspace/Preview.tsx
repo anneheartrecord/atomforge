@@ -30,11 +30,11 @@ export default function Preview({ html, title = 'Preview' }: PreviewProps) {
   const iframeWidth = device === 'mobile' ? '375px' : '100%';
 
   return (
-    <div className="flex flex-col h-full" style={{ background: '#0c0c0c' }}>
+    <div className="flex flex-col h-full" style={{ background: '#09090b' }}>
       {/* ── 浏览器顶栏 ── */}
       <div
         className="flex items-center gap-3 px-4 h-11 shrink-0"
-        style={{ background: '#141414', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+        style={{ background: '#111113', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
       >
         {/* 三色点 */}
         <div className="flex items-center gap-1.5">
@@ -46,7 +46,7 @@ export default function Preview({ html, title = 'Preview' }: PreviewProps) {
         {/* URL 栏 */}
         <div
           className="flex-1 flex items-center px-3 h-6 rounded-md text-[11px] truncate"
-          style={{ background: '#0c0c0c', color: '#555', border: '1px solid rgba(255,255,255,0.06)' }}
+          style={{ background: '#09090b', color: '#555', border: '1px solid rgba(255,255,255,0.06)' }}
         >
           <span style={{ color: '#333' }}>https://</span>
           <span style={{ color: '#888' }}>{title}.atomforge.dev</span>
@@ -57,14 +57,14 @@ export default function Preview({ html, title = 'Preview' }: PreviewProps) {
           <button
             onClick={() => setDevice('desktop')}
             className="p-1.5 rounded-md transition-colors"
-            style={{ background: device === 'desktop' ? '#1a1a1a' : 'transparent', color: device === 'desktop' ? '#4267ff' : '#555' }}
+            style={{ background: device === 'desktop' ? '#18181b' : 'transparent', color: device === 'desktop' ? '#6366f1' : '#555' }}
           >
             <Monitor size={14} />
           </button>
           <button
             onClick={() => setDevice('mobile')}
             className="p-1.5 rounded-md transition-colors"
-            style={{ background: device === 'mobile' ? '#1a1a1a' : 'transparent', color: device === 'mobile' ? '#4267ff' : '#555' }}
+            style={{ background: device === 'mobile' ? '#18181b' : 'transparent', color: device === 'mobile' ? '#6366f1' : '#555' }}
           >
             <Smartphone size={14} />
           </button>

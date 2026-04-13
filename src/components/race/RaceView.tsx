@@ -11,7 +11,7 @@ export default function RaceView({ entries, onSelect }: RaceViewProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   return (
-    <div className="flex flex-col h-full" style={{ background: '#0c0c0c' }}>
+    <div className="flex flex-col h-full" style={{ background: '#09090b' }}>
       {/* Header */}
       <div
         className="flex items-center gap-3 px-4 h-10 shrink-0 text-xs font-semibold"
@@ -29,8 +29,8 @@ export default function RaceView({ entries, onSelect }: RaceViewProps) {
               key={entry.id}
               className="flex flex-col rounded-2xl overflow-hidden transition-all"
               style={{
-                background: '#141414',
-                border: expandedId === entry.id ? '1px solid #4267ff' : '1px solid rgba(255,255,255,0.06)',
+                background: '#111113',
+                border: expandedId === entry.id ? '1px solid #6366f1' : '1px solid rgba(255,255,255,0.06)',
               }}
             >
               {/* Preview header - macOS dots */}
@@ -48,7 +48,7 @@ export default function RaceView({ entries, onSelect }: RaceViewProps) {
                     Variant {String.fromCharCode(65 + index)}
                   </span>
                 </div>
-                {entry.status === 'running' && <Loader2 size={12} className="animate-spin" style={{ color: '#4267ff' }} />}
+                {entry.status === 'running' && <Loader2 size={12} className="animate-spin" style={{ color: '#6366f1' }} />}
                 {entry.status === 'completed' && <Check size={12} style={{ color: '#4ade80' }} />}
               </div>
 
@@ -57,7 +57,7 @@ export default function RaceView({ entries, onSelect }: RaceViewProps) {
                 {entry.status === 'running' ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="flex flex-col items-center gap-3">
-                      <Loader2 size={24} className="animate-spin" style={{ color: '#4267ff' }} />
+                      <Loader2 size={24} className="animate-spin" style={{ color: '#6366f1' }} />
                       <span className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>Generating...</span>
                     </div>
                   </div>
@@ -90,7 +90,7 @@ export default function RaceView({ entries, onSelect }: RaceViewProps) {
                   onClick={() => onSelect(entry.id)}
                   disabled={entry.status !== 'completed'}
                   className="flex items-center gap-1 px-3 py-1 rounded-md text-xs font-medium cursor-pointer border-0 disabled:opacity-30"
-                  style={{ background: '#4267ff', color: '#fff' }}
+                  style={{ background: '#6366f1', color: '#fff' }}
                 >
                   <Check size={12} />
                   Select

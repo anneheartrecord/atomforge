@@ -15,7 +15,7 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative flex min-h-screen flex-col items-center justify-center px-6 pt-16">
+    <section className="relative flex min-h-screen flex-col items-center justify-center px-8 pt-20">
       {/* 背景光效 */}
       <div
         className="pointer-events-none absolute inset-0"
@@ -35,7 +35,7 @@ export default function Hero() {
       <div className="relative z-10 mx-auto max-w-3xl text-center">
         {/* Badge */}
         <div
-          className="glass mb-8 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm"
+          className="glass mb-10 inline-flex items-center gap-2.5 rounded-full px-5 py-2 text-sm"
           style={{ color: 'var(--color-text-secondary)' }}
         >
           <Sparkles size={14} style={{ color: 'var(--color-primary)' }} />
@@ -44,7 +44,7 @@ export default function Hero() {
 
         {/* 大标题 */}
         <h1
-          className="gradient-text mb-6 text-6xl font-bold leading-tight tracking-tight"
+          className="gradient-text mb-8 text-6xl font-bold leading-tight tracking-tight"
           style={{ lineHeight: 1.15 }}
         >
           Build anything with
@@ -54,7 +54,7 @@ export default function Hero() {
 
         {/* 副标题 */}
         <p
-          className="mx-auto mb-12 max-w-xl text-lg leading-relaxed"
+          className="mx-auto mb-14 max-w-xl text-lg leading-relaxed"
           style={{ color: 'var(--color-text-secondary)' }}
         >
           Describe your idea and let a team of specialized AI agents turn it into
@@ -63,8 +63,8 @@ export default function Hero() {
 
         {/* 大输入框 */}
         <div
-          className="glass mx-auto flex max-w-2xl items-center gap-3 p-2"
-          style={{ borderRadius: 40, height: 64 }}
+          className="glass mx-auto flex max-w-2xl items-center gap-3 p-2.5"
+          style={{ borderRadius: 40, height: 68 }}
         >
           <input
             type="text"
@@ -72,12 +72,12 @@ export default function Hero() {
             onChange={(e) => setPrompt(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleStart()}
             placeholder="Describe what you want to build..."
-            className="h-full flex-1 border-none bg-transparent px-5 text-base outline-none"
+            className="h-full flex-1 border-none bg-transparent px-6 text-base outline-none"
             style={{ color: 'var(--color-text-primary)' }}
           />
           <button
             onClick={handleStart}
-            className="flex h-12 cursor-pointer items-center gap-2 rounded-full px-6 text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.98]"
+            className="flex h-12 cursor-pointer items-center gap-2.5 rounded-full px-7 text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.98]"
             style={{
               background: 'var(--color-primary)',
               border: 'none',

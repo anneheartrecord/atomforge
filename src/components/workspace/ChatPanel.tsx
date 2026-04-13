@@ -9,7 +9,7 @@ const AGENT_META: Record<string, { name: string; avatar: string; color: string }
   alex:  { name: 'Alex',  avatar: '👨‍💻', color: '#4ade80' },
   luna:  { name: 'Luna',  avatar: '🎨', color: '#c084fc' },
   sarah: { name: 'Sarah', avatar: '🔍', color: '#facc15' },
-  assistant: { name: 'Assistant', avatar: '🤖', color: '#4267ff' },
+  assistant: { name: 'Assistant', avatar: '🤖', color: '#6366f1' },
 };
 
 // ── 简易 Markdown 渲染 ───────────────────────────────────
@@ -22,7 +22,7 @@ function renderMarkdown(text: string) {
       const lang = lines[0]?.trim() || '';
       const code = lang ? lines.slice(1).join('\n') : lines.join('\n');
       return (
-        <pre key={i} className="my-2 p-3 rounded-lg text-xs overflow-x-auto" style={{ background: '#0c0c0c' }}>
+        <pre key={i} className="my-2 p-3 rounded-lg text-xs overflow-x-auto" style={{ background: '#09090b' }}>
           {lang && <div className="text-[10px] mb-1" style={{ color: '#555' }}>{lang}</div>}
           <code style={{ color: '#e5e5e5' }}>{code}</code>
         </pre>
@@ -34,7 +34,7 @@ function renderMarkdown(text: string) {
       <span key={i}>
         {inlineParts.map((ip, j) =>
           ip.startsWith('`') && ip.endsWith('`') ? (
-            <code key={j} className="px-1.5 py-0.5 rounded text-xs" style={{ background: '#1a1a1a', color: '#c084fc' }}>
+            <code key={j} className="px-1.5 py-0.5 rounded text-xs" style={{ background: '#18181b', color: '#c084fc' }}>
               {ip.slice(1, -1)}
             </code>
           ) : (
@@ -91,7 +91,7 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
       <div className="flex items-center justify-between px-4 h-11 shrink-0" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <div className="flex items-center gap-2 text-xs">
           <span style={{ color: '#888' }}>Mode:</span>
-          <span className="font-medium capitalize" style={{ color: '#4267ff' }}>{mode}</span>
+          <span className="font-medium capitalize" style={{ color: '#6366f1' }}>{mode}</span>
         </div>
         {currentAgent && (
           <div className="flex items-center gap-1.5 text-xs">
@@ -130,14 +130,14 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
                   <div
                     className="px-3.5 py-2.5 text-sm leading-relaxed"
                     style={{
-                      background: isUser ? '#1a2744' : '#1a1a1a',
+                      background: isUser ? '#1a2744' : '#18181b',
                       borderRadius: isUser ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
                       color: '#ddd',
                     }}
                   >
                     {renderMarkdown(msg.content)}
                     {msg.isStreaming && (
-                      <span className="inline-block w-1.5 h-4 ml-0.5 animate-pulse rounded-sm" style={{ background: '#4267ff' }} />
+                      <span className="inline-block w-1.5 h-4 ml-0.5 animate-pulse rounded-sm" style={{ background: '#6366f1' }} />
                     )}
                   </div>
 
@@ -154,7 +154,7 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
         {/* 加载中指示 */}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs" style={{ background: '#1a1a1a', color: '#888' }}>
+            <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs" style={{ background: '#18181b', color: '#888' }}>
               <Loader2 size={14} className="animate-spin" />
               Thinking…
             </div>
@@ -172,9 +172,9 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
               onClick={() => onModeChange(m)}
               className="px-3 py-1 text-[11px] rounded-lg capitalize transition-all"
               style={{
-                background: mode === m ? '#4267ff20' : 'transparent',
-                color: mode === m ? '#4267ff' : '#555',
-                border: mode === m ? '1px solid #4267ff40' : '1px solid transparent',
+                background: mode === m ? '#6366f120' : 'transparent',
+                color: mode === m ? '#6366f1' : '#555',
+                border: mode === m ? '1px solid #6366f140' : '1px solid transparent',
               }}
             >
               {m}
@@ -182,7 +182,7 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
           ))}
         </div>
 
-        <div className="flex items-end gap-2 p-2 rounded-xl" style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="flex items-end gap-2 p-2 rounded-xl" style={{ background: '#111113', border: '1px solid rgba(255,255,255,0.06)' }}>
           <textarea
             ref={textareaRef}
             value={input}
@@ -197,7 +197,7 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
             className="p-2 rounded-lg transition-colors shrink-0 disabled:opacity-30"
-            style={{ background: '#4267ff' }}
+            style={{ background: '#6366f1' }}
           >
             <Send size={14} />
           </button>

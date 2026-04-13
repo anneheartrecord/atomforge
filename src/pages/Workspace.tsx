@@ -41,7 +41,7 @@ const DEFAULT_FILES: Record<string, string> = {
   'style.css': `* { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #0c0c0c;
+  background: #09090b;
   color: #e5e5e5;
   display: flex;
   align-items: center;
@@ -72,8 +72,8 @@ const MOCK_TEAM_STEPS: TeamStep[] = [
 // ── Mock Race Entries ─────────────────────────────────────
 const MOCK_RACE_ENTRIES: RaceEntry[] = [
   { id: 'r1', prompt: 'Landing page', output: '<html><body style="background:#111;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif"><div><h1 style="font-size:3rem">Design A</h1><p style="color:#888">Minimalist approach</p></div></body></html>', status: 'completed' },
-  { id: 'r2', prompt: 'Landing page', output: '<html><body style="background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif"><div style="text-align:center"><h1 style="font-size:3rem;background:linear-gradient(90deg,#4267ff,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Design B</h1><p style="color:#aaa">Gradient style</p></div></body></html>', status: 'completed' },
-  { id: 'r3', prompt: 'Landing page', output: '<html><body style="background:#0c0c0c;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-family:monospace"><div style="border:1px solid #333;padding:3rem;border-radius:12px"><h1 style="color:#4ade80">Design C</h1><p style="color:#666">Terminal vibes</p></div></body></html>', status: 'running' },
+  { id: 'r2', prompt: 'Landing page', output: '<html><body style="background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif"><div style="text-align:center"><h1 style="font-size:3rem;background:linear-gradient(90deg,#6366f1,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Design B</h1><p style="color:#aaa">Gradient style</p></div></body></html>', status: 'completed' },
+  { id: 'r3', prompt: 'Landing page', output: '<html><body style="background:#09090b;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-family:monospace"><div style="border:1px solid #333;padding:3rem;border-radius:12px"><h1 style="color:#4ade80">Design C</h1><p style="color:#666">Terminal vibes</p></div></body></html>', status: 'running' },
 ];
 
 // ── 拖拽 Hook ─────────────────────────────────────────────
@@ -153,7 +153,7 @@ function TeamPromptInput({ onSend, isLoading }: { onSend: (msg: string) => void;
 
   return (
     <div className="px-3 pb-3 pt-2 shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-      <div className="flex items-end gap-2 p-2 rounded-xl" style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.06)' }}>
+      <div className="flex items-end gap-2 p-2 rounded-xl" style={{ background: '#111113', border: '1px solid rgba(255,255,255,0.06)' }}>
         <textarea
           ref={textareaRef}
           value={input}
@@ -168,7 +168,7 @@ function TeamPromptInput({ onSend, isLoading }: { onSend: (msg: string) => void;
           onClick={handleSend}
           disabled={!input.trim() || isLoading}
           className="p-2 rounded-lg transition-colors shrink-0 disabled:opacity-30"
-          style={{ background: '#4267ff' }}
+          style={{ background: '#6366f1' }}
         >
           {isLoading ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
         </button>
@@ -318,7 +318,7 @@ export default function Workspace() {
 
   // ── Render ────────────────────────────────────────────
   return (
-    <div className="flex flex-col h-screen" style={{ background: '#0c0c0c', color: '#e5e5e5' }}>
+    <div className="flex flex-col h-screen" style={{ background: '#09090b', color: '#e5e5e5' }}>
       {/* ─── 顶部工具栏 ─── */}
       <header
         className="flex items-center justify-between px-5 h-13 shrink-0"
@@ -326,21 +326,21 @@ export default function Workspace() {
       >
         {/* 左：项目名 */}
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold" style={{ background: '#4267ff' }}>⚛</div>
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold" style={{ background: '#6366f1' }}>⚛</div>
           <span className="font-semibold text-sm">AtomForge</span>
           <span className="text-xs" style={{ color: '#555' }}>/</span>
           <span className="text-xs" style={{ color: '#888' }}>my-project</span>
         </div>
 
         {/* 中：模式切换 */}
-        <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: '#141414' }}>
+        <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: '#111113' }}>
           {(['engineer', 'team', 'race'] as WorkspaceMode[]).map(m => (
             <button
               key={m}
               onClick={() => setMode(m)}
               className="px-4 py-1.5 text-xs font-medium rounded-lg transition-all capitalize"
               style={{
-                background: mode === m ? '#4267ff' : 'transparent',
+                background: mode === m ? '#6366f1' : 'transparent',
                 color: mode === m ? '#fff' : '#888',
               }}
             >
@@ -351,11 +351,11 @@ export default function Workspace() {
 
         {/* 右：操作区 */}
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 px-4 py-1.5 text-xs font-medium rounded-lg transition-colors" style={{ background: '#4267ff' }}>
+          <button className="flex items-center gap-2 px-4 py-1.5 text-xs font-medium rounded-lg transition-colors" style={{ background: '#6366f1' }}>
             <Rocket size={14} />
             Publish
           </button>
-          <button className="p-1.5 rounded-lg" style={{ background: '#1a1a1a' }}>
+          <button className="p-1.5 rounded-lg" style={{ background: '#18181b' }}>
             <ChevronDown size={14} />
           </button>
         </div>

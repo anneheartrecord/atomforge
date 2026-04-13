@@ -1,25 +1,41 @@
 @import "tailwindcss";
 
-/* Atoms.dev inspired dark theme */
+/* AtomForge — Atoms.dev inspired dark theme (refined) */
 :root {
-  --color-primary: #4267ff;
-  --color-primary-hover: #3355dd;
-  --color-bg-dark: #0c0c0c;
-  --color-bg-card: #141414;
-  --color-bg-elevated: #1a1a1a;
-  --color-bg-input: #1e1e1e;
-  --color-border: rgba(255, 255, 255, 0.06);
-  --color-border-hover: rgba(255, 255, 255, 0.12);
-  --color-text-primary: rgba(255, 255, 255, 0.95);
-  --color-text-secondary: rgba(255, 255, 255, 0.6);
-  --color-text-muted: rgba(255, 255, 255, 0.4);
+  /* Primary — a warmer, more modern blue-violet */
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-primary-light: rgba(99, 102, 241, 0.15);
 
-  /* Agent colors */
-  --color-emma: #FF6B6B;
-  --color-bob: #4ECDC4;
-  --color-alex: #4267FF;
-  --color-luna: #FFE66D;
-  --color-sarah: #A78BFA;
+  /* Backgrounds — slightly warmer blacks (not pure #000) */
+  --color-bg-dark: #09090b;
+  --color-bg-card: #111113;
+  --color-bg-elevated: #18181b;
+  --color-bg-input: #1c1c21;
+  --color-bg-surface: #27272a;
+
+  /* Borders — subtle warm tones */
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-hover: rgba(255, 255, 255, 0.16);
+  --color-border-focus: rgba(99, 102, 241, 0.5);
+
+  /* Text — high contrast hierarchy */
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #71717a;
+  --color-text-accent: #818cf8;
+
+  /* Agent colors — refined palette */
+  --color-emma: #f472b6;
+  --color-bob: #22d3ee;
+  --color-alex: #818cf8;
+  --color-luna: #fbbf24;
+  --color-sarah: #a78bfa;
+
+  /* Accent / Status */
+  --color-success: #34d399;
+  --color-error: #f87171;
+  --color-warning: #fbbf24;
 }
 
 * {
@@ -38,6 +54,16 @@ body {
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+/* Global spacing defaults for buttons and inputs */
+button {
+  padding: 0.625rem 1.25rem; /* py-2.5 px-5 baseline */
+}
+
+input, textarea, select {
+  padding: 0.75rem 1.25rem; /* py-3 px-5 baseline */
 }
 
 code, pre {
@@ -63,17 +89,17 @@ code, pre {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Glass effect utility */
+/* Glass effect utility — warmer, more visible */
 .glass {
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background: rgba(17, 17, 19, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Gradient text */
+/* Gradient text — refined multi-stop */
 .gradient-text {
-  background: linear-gradient(135deg, #4267ff, #a78bfa, #4ecdc4);
+  background: linear-gradient(135deg, #818cf8 0%, #c084fc 40%, #22d3ee 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

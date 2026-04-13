@@ -17,7 +17,7 @@ function StatusIcon({ status }: { status: TeamStep['status'] }) {
       );
     case 'running':
       return (
-        <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#4267ff20', color: '#4267ff' }}>
+        <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#6366f120', color: '#6366f1' }}>
           <Loader2 size={14} className="animate-spin" />
         </div>
       );
@@ -80,10 +80,10 @@ export default function TeamPipeline({ steps, currentStep }: TeamPipelineProps) 
                 {step.status === 'running' && step.output && (
                   <div
                     className="mt-2 p-3 rounded-lg text-xs leading-relaxed animate-pulse"
-                    style={{ background: '#141414', color: '#888', border: '1px solid rgba(255,255,255,0.04)' }}
+                    style={{ background: '#111113', color: '#888', border: '1px solid rgba(255,255,255,0.04)' }}
                   >
                     {step.output}
-                    <span className="inline-block w-1.5 h-3 ml-0.5 rounded-sm animate-pulse" style={{ background: '#4267ff' }} />
+                    <span className="inline-block w-1.5 h-3 ml-0.5 rounded-sm animate-pulse" style={{ background: '#6366f1' }} />
                   </div>
                 )}
               </div>

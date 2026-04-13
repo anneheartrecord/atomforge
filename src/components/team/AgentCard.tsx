@@ -23,7 +23,7 @@ export default function AgentCard({ agent, status, output }: AgentCardProps) {
     <div
       className="rounded-xl p-3 transition-all duration-300"
       style={{
-        background: '#141414',
+        background: '#111113',
         border: `1px solid ${borderColor}`,
         ...(status === 'working' ? { boxShadow: `0 0 20px ${agent.color}10` } : {}),
       }}

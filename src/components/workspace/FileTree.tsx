@@ -46,7 +46,7 @@ export default function FileTree({ files, activeFile, onFileSelect, onAddFile, o
   return (
     <div
       className="flex flex-col w-48 shrink-0 overflow-y-auto"
-      style={{ background: '#0c0c0c', borderRight: '1px solid rgba(255,255,255,0.06)' }}
+      style={{ background: '#09090b', borderRight: '1px solid rgba(255,255,255,0.06)' }}
     >
       {/* 头部 */}
       <div className="flex items-center justify-between px-3 h-9 shrink-0" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
@@ -70,8 +70,8 @@ export default function FileTree({ files, activeFile, onFileSelect, onAddFile, o
               onClick={() => onFileSelect(name)}
               className="flex items-center gap-2 px-3 py-1.5 cursor-pointer group transition-colors"
               style={{
-                background: active ? '#1a1a1a' : 'transparent',
-                borderLeft: active ? '2px solid #4267ff' : '2px solid transparent',
+                background: active ? '#18181b' : 'transparent',
+                borderLeft: active ? '2px solid #6366f1' : '2px solid transparent',
               }}
             >
               <FileIcon name={name} />
