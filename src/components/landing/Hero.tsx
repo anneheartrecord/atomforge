@@ -32,39 +32,45 @@ export default function Hero() {
         }}
       />
 
-      <div className="relative z-10 mx-auto max-w-3xl text-center">
+      <div className="relative z-10 mx-auto max-w-4xl text-center">
         {/* Badge */}
         <div
-          className="glass mb-10 inline-flex items-center gap-2.5 rounded-full px-5 py-2 text-sm"
-          style={{ color: 'var(--color-text-secondary)' }}
+          className="glass inline-flex items-center gap-3 rounded-full px-6 py-2.5 text-sm tracking-wide"
+          style={{ color: 'var(--color-text-secondary)', marginBottom: 48 }}
         >
-          <Sparkles size={14} style={{ color: 'var(--color-primary)' }} />
+          <Sparkles size={15} style={{ color: 'var(--color-primary)' }} />
           AI-powered code generation platform
         </div>
 
-        {/* 大标题 */}
+        {/* 大标题 — 超大字号 + 充足行高 */}
         <h1
-          className="gradient-text mb-8 text-6xl font-bold leading-tight tracking-tight"
-          style={{ lineHeight: 1.15 }}
+          className="gradient-text font-bold tracking-tight"
+          style={{ fontSize: 'clamp(40px, 6vw, 72px)', lineHeight: 1.1, marginBottom: 32 }}
         >
           Build anything with
           <br />
           AI agents
         </h1>
 
-        {/* 副标题 */}
+        {/* 副标题 — 更大字号 + 更宽行距 */}
         <p
-          className="mx-auto mb-14 max-w-xl text-lg leading-relaxed"
-          style={{ color: 'var(--color-text-secondary)' }}
+          className="mx-auto max-w-2xl"
+          style={{
+            color: 'var(--color-text-secondary)',
+            fontSize: 18,
+            lineHeight: 1.8,
+            marginBottom: 56,
+            letterSpacing: '0.2px',
+          }}
         >
           Describe your idea and let a team of specialized AI agents turn it into
           production-ready code — from architecture to deployment.
         </p>
 
-        {/* 大输入框 */}
+        {/* 大输入框 — Atoms 风格 64px 高 */}
         <div
-          className="glass mx-auto flex max-w-2xl items-center gap-3 p-2.5"
-          style={{ borderRadius: 40, height: 68 }}
+          className="glass mx-auto flex max-w-2xl items-center gap-4"
+          style={{ borderRadius: 40, height: 72, padding: '8px 8px 8px 28px' }}
         >
           <input
             type="text"
@@ -72,15 +78,18 @@ export default function Hero() {
             onChange={(e) => setPrompt(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleStart()}
             placeholder="Describe what you want to build..."
-            className="h-full flex-1 border-none bg-transparent px-6 text-base outline-none"
-            style={{ color: 'var(--color-text-primary)' }}
+            className="h-full flex-1 border-none bg-transparent text-base outline-none"
+            style={{ color: 'var(--color-text-primary)', fontSize: 16, padding: 0 }}
           />
           <button
             onClick={handleStart}
-            className="flex h-12 cursor-pointer items-center gap-2.5 rounded-full px-7 text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.98]"
+            className="flex shrink-0 cursor-pointer items-center gap-3 rounded-full text-sm font-semibold text-white transition-all hover:brightness-110 active:scale-[0.97]"
             style={{
               background: 'var(--color-primary)',
               border: 'none',
+              height: 52,
+              padding: '0 28px',
+              fontSize: 15,
             }}
           >
             Start Building

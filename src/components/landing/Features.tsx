@@ -36,23 +36,23 @@ const features: Feature[] = [
 
 export default function Features() {
   return (
-    <section className="px-6 py-24">
+    <section className="px-8 py-32">
       <div className="mx-auto max-w-5xl">
         <h2
-          className="mb-4 text-center text-3xl font-bold"
-          style={{ color: 'var(--color-text-primary)' }}
+          className="text-center font-bold"
+          style={{ color: 'var(--color-text-primary)', fontSize: 36, marginBottom: 16 }}
         >
           Everything you need
         </h2>
         <p
-          className="mx-auto mb-14 max-w-lg text-center text-base"
-          style={{ color: 'var(--color-text-secondary)' }}
+          className="mx-auto max-w-lg text-center"
+          style={{ color: 'var(--color-text-secondary)', fontSize: 16, lineHeight: 1.7, marginBottom: 56 }}
         >
           From ideation to production-ready code, AtomForge handles the entire
           development lifecycle.
         </p>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {features.map((feature) => (
             <div
               key={feature.title}
@@ -61,7 +61,7 @@ export default function Features() {
                 background: 'var(--color-bg-card)',
                 border: '1px solid var(--color-border)',
                 borderRadius: 24,
-                padding: 32,
+                padding: 36,
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = 'var(--color-border-hover)';
@@ -71,23 +71,26 @@ export default function Features() {
               }}
             >
               <div
-                className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl"
+                className="flex items-center justify-center rounded-xl"
                 style={{
-                  background: 'rgba(66,103,255,0.10)',
+                  background: 'var(--color-primary-light)',
                   color: 'var(--color-primary)',
+                  width: 48,
+                  height: 48,
+                  marginBottom: 24,
                 }}
               >
                 {feature.icon}
               </div>
               <h3
-                className="mb-2 text-lg font-semibold"
-                style={{ color: 'var(--color-text-primary)' }}
+                className="font-semibold"
+                style={{ color: 'var(--color-text-primary)', fontSize: 20, marginBottom: 12 }}
               >
                 {feature.title}
               </h3>
               <p
-                className="text-sm leading-relaxed"
-                style={{ color: 'var(--color-text-secondary)' }}
+                className="leading-relaxed"
+                style={{ color: 'var(--color-text-secondary)', fontSize: 15, lineHeight: 1.75 }}
               >
                 {feature.description}
               </p>

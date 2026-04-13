@@ -45,23 +45,23 @@ const agents: (Pick<AgentConfig, 'role' | 'name' | 'title' | 'description' | 'co
 
 export default function AgentShowcase() {
   return (
-    <section className="px-6 py-24" style={{ background: 'var(--color-bg-dark)' }}>
+    <section className="px-8 py-32" style={{ background: 'var(--color-bg-dark)' }}>
       <div className="mx-auto max-w-6xl">
         <h2
-          className="mb-3 text-center text-3xl font-bold tracking-tight"
-          style={{ color: 'var(--color-text-primary)' }}
+          className="text-center font-bold tracking-tight"
+          style={{ color: 'var(--color-text-primary)', fontSize: 36, marginBottom: 16 }}
         >
           Meet the <span className="gradient-text">Agents</span>
         </h2>
         <p
-          className="mx-auto mb-14 max-w-lg text-center text-base"
-          style={{ color: 'var(--color-text-secondary)' }}
+          className="mx-auto max-w-lg text-center"
+          style={{ color: 'var(--color-text-secondary)', fontSize: 16, lineHeight: 1.7, marginBottom: 56 }}
         >
           Each agent brings specialized expertise. Combine them in Team Mode or
           let them compete in Race Mode.
         </p>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
           {agents.map((agent) => (
             <div
               key={agent.role}
@@ -70,7 +70,7 @@ export default function AgentShowcase() {
                 background: 'var(--color-bg-card)',
                 border: '1px solid var(--color-border)',
                 borderRadius: 24,
-                padding: 28,
+                padding: 32,
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'scale(1.02)';
@@ -85,32 +85,32 @@ export default function AgentShowcase() {
             >
               {/* Avatar */}
               <div
-                className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl text-2xl"
-                style={{ background: `${agent.color}18` }}
+                className="flex items-center justify-center rounded-2xl text-2xl"
+                style={{ background: `${agent.color}18`, width: 56, height: 56, marginBottom: 20 }}
               >
                 {agent.avatar}
               </div>
 
               {/* Name */}
               <h3
-                className="mb-1 text-base font-semibold"
-                style={{ color: agent.color }}
+                className="font-semibold"
+                style={{ color: agent.color, fontSize: 16, marginBottom: 6 }}
               >
                 {agent.name}
               </h3>
 
               {/* Title */}
               <p
-                className="mb-3 text-xs font-medium uppercase tracking-wider"
-                style={{ color: 'var(--color-text-muted)' }}
+                className="text-xs font-medium uppercase tracking-wider"
+                style={{ color: 'var(--color-text-muted)', marginBottom: 16 }}
               >
                 {agent.title}
               </p>
 
               {/* Description */}
               <p
-                className="text-sm leading-relaxed"
-                style={{ color: 'var(--color-text-secondary)' }}
+                className="leading-relaxed"
+                style={{ color: 'var(--color-text-secondary)', fontSize: 14, lineHeight: 1.7 }}
               >
                 {agent.description}
               </p>

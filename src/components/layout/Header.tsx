@@ -91,10 +91,12 @@ export default function Header() {
           ) : (
             <Link
               to="/login"
-              className="flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium no-underline transition-all duration-200"
+              className="flex items-center gap-2 rounded-full text-sm font-medium no-underline transition-all duration-200"
               style={{
                 background: 'var(--color-primary)',
                 color: '#fff',
+                padding: '10px 24px',
+                height: 40,
               }}
               onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--color-primary-hover)')}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--color-primary)')}
