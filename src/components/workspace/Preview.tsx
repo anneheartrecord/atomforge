@@ -30,11 +30,11 @@ export default function Preview({ html, title = 'Preview' }: PreviewProps) {
   const iframeWidth = device === 'mobile' ? '375px' : '100%';
 
   return (
-    <div className="flex flex-col h-full" style={{ background: '#09090b' }}>
+    <div className="flex flex-col h-full" style={{ background: '#ffffff' }}>
       {/* ── 浏览器顶栏 ── */}
       <div
         className="flex items-center gap-3 px-4 h-11 shrink-0"
-        style={{ background: '#111113', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+        style={{ background: '#ffffff', borderBottom: '1px solid rgba(0,0,0,0.06)' }}
       >
         {/* 三色点 */}
         <div className="flex items-center gap-1.5">
@@ -46,10 +46,10 @@ export default function Preview({ html, title = 'Preview' }: PreviewProps) {
         {/* URL 栏 */}
         <div
           className="flex-1 flex items-center px-3 h-6 rounded-md text-[11px] truncate"
-          style={{ background: '#09090b', color: '#555', border: '1px solid rgba(255,255,255,0.06)' }}
+          style={{ background: '#ffffff', color: '#94a3b8', border: '1px solid rgba(0,0,0,0.06)' }}
         >
           <span style={{ color: '#333' }}>https://</span>
-          <span style={{ color: '#888' }}>{title}.atomforge.dev</span>
+          <span style={{ color: '#64748b' }}>{title}.atomforge.dev</span>
         </div>
 
         {/* 工具按钮 */}
@@ -57,21 +57,21 @@ export default function Preview({ html, title = 'Preview' }: PreviewProps) {
           <button
             onClick={() => setDevice('desktop')}
             className="p-2 rounded-md transition-colors"
-            style={{ background: device === 'desktop' ? '#18181b' : 'transparent', color: device === 'desktop' ? '#6366f1' : '#555' }}
+            style={{ background: device === 'desktop' ? '#f8fafc' : 'transparent', color: device === 'desktop' ? '#3b82f6' : '#555' }}
           >
             <Monitor size={14} />
           </button>
           <button
             onClick={() => setDevice('mobile')}
             className="p-2 rounded-md transition-colors"
-            style={{ background: device === 'mobile' ? '#18181b' : 'transparent', color: device === 'mobile' ? '#6366f1' : '#555' }}
+            style={{ background: device === 'mobile' ? '#f8fafc' : 'transparent', color: device === 'mobile' ? '#3b82f6' : '#555' }}
           >
             <Smartphone size={14} />
           </button>
-          <button onClick={handleRefresh} className="p-2 rounded-md transition-colors hover:bg-white/5" style={{ color: '#555' }}>
+          <button onClick={handleRefresh} className="p-2 rounded-md transition-colors hover:bg-white/5" style={{ color: '#94a3b8' }}>
             <RefreshCw size={14} />
           </button>
-          <button onClick={handleFullscreen} className="p-2 rounded-md transition-colors hover:bg-white/5" style={{ color: '#555' }}>
+          <button onClick={handleFullscreen} className="p-2 rounded-md transition-colors hover:bg-white/5" style={{ color: '#94a3b8' }}>
             <Maximize2 size={14} />
           </button>
         </div>
@@ -90,7 +90,7 @@ export default function Preview({ html, title = 'Preview' }: PreviewProps) {
             width: iframeWidth,
             maxWidth: '100%',
             background: '#fff',
-            ...(device === 'mobile' ? { borderRadius: '12px', margin: '12px auto', boxShadow: '0 0 0 1px rgba(255,255,255,0.06)' } : {}),
+            ...(device === 'mobile' ? { borderRadius: '12px', margin: '12px auto', boxShadow: '0 0 0 1px rgba(0,0,0,0.06)' } : {}),
           }}
         />
       </div>

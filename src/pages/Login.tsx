@@ -45,14 +45,14 @@ export default function Login({ onGoogleSignIn }: LoginProps) {
   return (
     <div
       className="flex min-h-screen items-center justify-center px-6"
-      style={{ background: 'var(--color-bg-dark)' }}
+      style={{ background: '#fafbff' }}
     >
       {/* 背景光效 */}
       <div
         className="pointer-events-none fixed inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 50% 40% at 50% 40%, rgba(66,103,255,0.08) 0%, transparent 70%)',
+            'radial-gradient(ellipse 50% 40% at 50% 40%, rgba(59,130,246,0.05) 0%, transparent 70%)',
         }}
       />
 

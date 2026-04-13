@@ -8,7 +8,7 @@ interface ProjectCardProps {
 }
 
 const modeBadgeColors: Record<Project['mode'], { bg: string; text: string }> = {
-  engineer: { bg: 'rgba(66,103,255,0.15)', text: '#6366f1' },
+  engineer: { bg: 'rgba(66,103,255,0.15)', text: '#3b82f6' },
   team: { bg: 'rgba(78,205,196,0.15)', text: '#4ECDC4' },
   race: { bg: 'rgba(255,107,107,0.15)', text: '#FF6B6B' },
 };

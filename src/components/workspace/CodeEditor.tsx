@@ -44,7 +44,7 @@ export default function CodeEditor({ files, activeFile, onFileChange, onContentC
       {/* ── Tab Bar ── */}
       <div
         className="flex items-center h-10 shrink-0 overflow-x-auto"
-        style={{ background: '#09090b', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+        style={{ background: '#ffffff', borderBottom: '1px solid rgba(0,0,0,0.06)' }}
       >
         {Object.keys(files).map(name => {
           const active = name === activeFile;
@@ -54,10 +54,10 @@ export default function CodeEditor({ files, activeFile, onFileChange, onContentC
               onClick={() => onFileChange(name)}
               className="flex items-center gap-1.5 px-4 py-2 h-full text-xs shrink-0 transition-colors group"
               style={{
-                background: active ? '#111113' : 'transparent',
-                color: active ? '#e5e5e5' : '#666',
+                background: active ? '#ffffff' : 'transparent',
+                color: active ? '#0f172a' : '#666',
                 borderRight: '1px solid rgba(255,255,255,0.04)',
-                borderBottom: active ? '2px solid #6366f1' : '2px solid transparent',
+                borderBottom: active ? '2px solid #3b82f6' : '2px solid transparent',
               }}
             >
               <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: fileIconColor(name) }} />

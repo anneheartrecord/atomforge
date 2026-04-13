@@ -15,20 +15,20 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative flex min-h-screen flex-col items-center justify-center px-8 pt-20">
-      {/* 背景光效 */}
+    <section className="relative flex min-h-screen flex-col items-center justify-center px-8 pt-20" style={{ background: '#fafbff' }}>
+      {/* 背景光效 — soft blue glow for white theme */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 60% 40% at 50% 30%, rgba(66,103,255,0.12) 0%, transparent 70%)',
+            'radial-gradient(ellipse 60% 40% at 50% 30%, rgba(59,130,246,0.06) 0%, transparent 70%)',
         }}
       />
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 40% 30% at 60% 50%, rgba(167,139,250,0.06) 0%, transparent 60%)',
+            'radial-gradient(ellipse 40% 30% at 60% 50%, rgba(139,92,246,0.04) 0%, transparent 60%)',
         }}
       />
 

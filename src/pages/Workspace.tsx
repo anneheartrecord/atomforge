@@ -41,8 +41,8 @@ const DEFAULT_FILES: Record<string, string> = {
   'style.css': `* { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #09090b;
-  color: #e5e5e5;
+  background: #ffffff;
+  color: #0f172a;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -72,8 +72,8 @@ const MOCK_TEAM_STEPS: TeamStep[] = [
 // ── Mock Race Entries ─────────────────────────────────────
 const MOCK_RACE_ENTRIES: RaceEntry[] = [
   { id: 'r1', prompt: 'Landing page', output: '<html><body style="background:#111;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif"><div><h1 style="font-size:3rem">Design A</h1><p style="color:#888">Minimalist approach</p></div></body></html>', status: 'completed' },
-  { id: 'r2', prompt: 'Landing page', output: '<html><body style="background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif"><div style="text-align:center"><h1 style="font-size:3rem;background:linear-gradient(90deg,#6366f1,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Design B</h1><p style="color:#aaa">Gradient style</p></div></body></html>', status: 'completed' },
-  { id: 'r3', prompt: 'Landing page', output: '<html><body style="background:#09090b;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-family:monospace"><div style="border:1px solid #333;padding:3rem;border-radius:12px"><h1 style="color:#4ade80">Design C</h1><p style="color:#666">Terminal vibes</p></div></body></html>', status: 'running' },
+  { id: 'r2', prompt: 'Landing page', output: '<html><body style="background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif"><div style="text-align:center"><h1 style="font-size:3rem;background:linear-gradient(90deg,#3b82f6,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Design B</h1><p style="color:#aaa">Gradient style</p></div></body></html>', status: 'completed' },
+  { id: 'r3', prompt: 'Landing page', output: '<html><body style="background:#ffffff;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-family:monospace"><div style="border:1px solid #333;padding:3rem;border-radius:12px"><h1 style="color:#4ade80">Design C</h1><p style="color:#666">Terminal vibes</p></div></body></html>', status: 'running' },
 ];
 
 // ── 拖拽 Hook ─────────────────────────────────────────────
@@ -152,8 +152,8 @@ function TeamPromptInput({ onSend, isLoading }: { onSend: (msg: string) => void;
   };
 
   return (
-    <div className="px-3 pb-3 pt-2 shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-      <div className="flex items-end gap-2 p-2 rounded-xl" style={{ background: '#111113', border: '1px solid rgba(255,255,255,0.06)' }}>
+    <div className="px-3 pb-3 pt-2 shrink-0" style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+      <div className="flex items-end gap-2 p-2 rounded-xl" style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.06)' }}>
         <textarea
           ref={textareaRef}
           value={input}
@@ -162,13 +162,13 @@ function TeamPromptInput({ onSend, isLoading }: { onSend: (msg: string) => void;
           placeholder="Describe what the team should build…"
           rows={1}
           className="flex-1 bg-transparent text-sm resize-none outline-none placeholder:text-gray-600"
-          style={{ color: '#e5e5e5', maxHeight: '120px' }}
+          style={{ color: '#0f172a', maxHeight: '120px' }}
         />
         <button
           onClick={handleSend}
           disabled={!input.trim() || isLoading}
           className="p-2 rounded-lg transition-colors shrink-0 disabled:opacity-30"
-          style={{ background: '#6366f1' }}
+          style={{ background: '#3b82f6' }}
         >
           {isLoading ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
         </button>
@@ -318,30 +318,30 @@ export default function Workspace() {
 
   // ── Render ────────────────────────────────────────────
   return (
-    <div className="flex flex-col h-screen" style={{ background: '#09090b', color: '#e5e5e5' }}>
+    <div className="flex flex-col h-screen" style={{ background: '#ffffff', color: '#0f172a' }}>
       {/* ─── 顶部工具栏 ─── */}
       <header
         className="flex items-center justify-between px-5 h-13 shrink-0"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+        style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}
       >
         {/* 左：项目名 */}
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold" style={{ background: '#6366f1' }}>⚛</div>
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold" style={{ background: '#3b82f6' }}>⚛</div>
           <span className="font-semibold text-sm">AtomForge</span>
-          <span className="text-xs" style={{ color: '#555' }}>/</span>
-          <span className="text-xs" style={{ color: '#888' }}>my-project</span>
+          <span className="text-xs" style={{ color: '#94a3b8' }}>/</span>
+          <span className="text-xs" style={{ color: '#64748b' }}>my-project</span>
         </div>
 
         {/* 中：模式切换 */}
-        <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: '#111113' }}>
+        <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: '#f1f5f9' }}>
           {(['engineer', 'team', 'race'] as WorkspaceMode[]).map(m => (
             <button
               key={m}
               onClick={() => setMode(m)}
               className="px-5 py-2 text-xs font-medium rounded-lg transition-all capitalize"
               style={{
-                background: mode === m ? '#6366f1' : 'transparent',
-                color: mode === m ? '#fff' : '#888',
+                background: mode === m ? '#3b82f6' : 'transparent',
+                color: mode === m ? '#fff' : '#64748b',
               }}
             >
               {m}
@@ -351,11 +351,11 @@ export default function Workspace() {
 
         {/* 右：操作区 */}
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 px-5 py-2 text-xs font-medium rounded-lg transition-colors" style={{ background: '#6366f1' }}>
+          <button className="flex items-center gap-2 px-5 py-2 text-xs font-medium rounded-lg transition-colors text-white" style={{ background: '#3b82f6' }}>
             <Rocket size={14} />
             Publish
           </button>
-          <button className="p-2 rounded-lg" style={{ background: '#18181b' }}>
+          <button className="p-2 rounded-lg" style={{ background: '#f8fafc' }}>
             <ChevronDown size={14} />
           </button>
         </div>
@@ -364,7 +364,7 @@ export default function Workspace() {
       {/* ─── 主体三栏 ─── */}
       <div ref={containerRef} className="flex flex-1 min-h-0">
         {/* 左栏 – Chat / Team Pipeline */}
-        <div className="flex flex-col min-h-0 overflow-hidden" style={{ width: `${leftW}%`, borderRight: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="flex flex-col min-h-0 overflow-hidden" style={{ width: `${leftW}%`, borderRight: '1px solid rgba(0,0,0,0.06)' }}>
           {mode === 'team' ? (
             <div className="flex flex-col h-full">
               <div className="flex-1 min-h-0 overflow-y-auto">
@@ -426,7 +426,7 @@ export default function Workspace() {
         />
 
         {/* 右栏 – Preview */}
-        <div className="flex flex-col min-h-0 overflow-hidden" style={{ width: `${rightW}%`, borderLeft: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="flex flex-col min-h-0 overflow-hidden" style={{ width: `${rightW}%`, borderLeft: '1px solid rgba(0,0,0,0.06)' }}>
           <Preview html={buildPreviewHtml()} title="my-project" />
         </div>
       </div>

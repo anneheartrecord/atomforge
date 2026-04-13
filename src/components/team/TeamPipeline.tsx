@@ -17,7 +17,7 @@ function StatusIcon({ status }: { status: TeamStep['status'] }) {
       );
     case 'running':
       return (
-        <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#6366f120', color: '#6366f1' }}>
+        <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#3b82f620', color: '#3b82f6' }}>
           <Loader2 size={14} className="animate-spin" />
         </div>
       );
@@ -40,8 +40,8 @@ export default function TeamPipeline({ steps, currentStep }: TeamPipelineProps) 
   return (
     <div className="flex flex-col h-full">
       {/* 标题 */}
-      <div className="flex items-center px-4 h-11 shrink-0" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <span className="text-xs font-medium" style={{ color: '#888' }}>Team Pipeline</span>
+      <div className="flex items-center px-4 h-11 shrink-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+        <span className="text-xs font-medium" style={{ color: '#64748b' }}>Team Pipeline</span>
         <span className="ml-auto text-[11px]" style={{ color: '#444' }}>
           {steps.filter(s => s.status === 'completed').length}/{steps.length} completed
         </span>
@@ -62,7 +62,7 @@ export default function TeamPipeline({ steps, currentStep }: TeamPipelineProps) 
                   <div
                     className="w-px flex-1 min-h-6 transition-colors duration-500"
                     style={{
-                      background: step.status === 'completed' ? '#4ade8040' : 'rgba(255,255,255,0.06)',
+                      background: step.status === 'completed' ? '#4ade8040' : 'rgba(0,0,0,0.06)',
                     }}
                   />
                 )}
@@ -80,10 +80,10 @@ export default function TeamPipeline({ steps, currentStep }: TeamPipelineProps) 
                 {step.status === 'running' && step.output && (
                   <div
                     className="mt-2 p-3 rounded-lg text-xs leading-relaxed animate-pulse"
-                    style={{ background: '#111113', color: '#888', border: '1px solid rgba(255,255,255,0.04)' }}
+                    style={{ background: '#ffffff', color: '#64748b', border: '1px solid rgba(255,255,255,0.04)' }}
                   >
                     {step.output}
-                    <span className="inline-block w-1.5 h-3 ml-0.5 rounded-sm animate-pulse" style={{ background: '#6366f1' }} />
+                    <span className="inline-block w-1.5 h-3 ml-0.5 rounded-sm animate-pulse" style={{ background: '#3b82f6' }} />
                   </div>
                 )}
               </div>

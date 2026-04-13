@@ -46,15 +46,15 @@ export default function FileTree({ files, activeFile, onFileSelect, onAddFile, o
   return (
     <div
       className="flex flex-col w-48 shrink-0 overflow-y-auto"
-      style={{ background: '#09090b', borderRight: '1px solid rgba(255,255,255,0.06)' }}
+      style={{ background: '#ffffff', borderRight: '1px solid rgba(0,0,0,0.06)' }}
     >
       {/* 头部 */}
-      <div className="flex items-center justify-between px-3 h-9 shrink-0" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <span className="text-[11px] font-medium uppercase tracking-wider" style={{ color: '#555' }}>Files</span>
+      <div className="flex items-center justify-between px-3 h-9 shrink-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+        <span className="text-[11px] font-medium uppercase tracking-wider" style={{ color: '#94a3b8' }}>Files</span>
         <button
           onClick={() => setIsAdding(true)}
           className="p-1 rounded hover:bg-white/5 transition-colors"
-          style={{ color: '#888' }}
+          style={{ color: '#64748b' }}
         >
           <Plus size={14} />
         </button>
@@ -70,12 +70,12 @@ export default function FileTree({ files, activeFile, onFileSelect, onAddFile, o
               onClick={() => onFileSelect(name)}
               className="flex items-center gap-2 px-4 py-2 cursor-pointer group transition-colors"
               style={{
-                background: active ? '#18181b' : 'transparent',
-                borderLeft: active ? '2px solid #6366f1' : '2px solid transparent',
+                background: active ? '#f8fafc' : 'transparent',
+                borderLeft: active ? '2px solid #3b82f6' : '2px solid transparent',
               }}
             >
               <FileIcon name={name} />
-              <span className="text-xs truncate flex-1" style={{ color: active ? '#e5e5e5' : '#888' }}>
+              <span className="text-xs truncate flex-1" style={{ color: active ? '#0f172a' : '#888' }}>
                 {name}
               </span>
               {onDeleteFile && (
@@ -94,7 +94,7 @@ export default function FileTree({ files, activeFile, onFileSelect, onAddFile, o
         {/* 新建文件输入 */}
         {isAdding && (
           <div className="flex items-center gap-1 px-4 py-2">
-            <File size={14} style={{ color: '#555' }} />
+            <File size={14} style={{ color: '#94a3b8' }} />
             <input
               autoFocus
               value={newName}
@@ -103,7 +103,7 @@ export default function FileTree({ files, activeFile, onFileSelect, onAddFile, o
               onBlur={() => { if (newName.trim()) handleAdd(); else setIsAdding(false); }}
               placeholder="filename.ext"
               className="flex-1 bg-transparent text-xs outline-none placeholder:text-gray-700"
-              style={{ color: '#e5e5e5' }}
+              style={{ color: '#0f172a' }}
             />
           </div>
         )}

@@ -27,7 +27,7 @@ export default function Header() {
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
             <defs>
               <linearGradient id="logo-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#6366f1" />
+                <stop stopColor="#3b82f6" />
                 <stop offset="0.5" stopColor="#a78bfa" />
                 <stop offset="1" stopColor="#4ecdc4" />
               </linearGradient>
@@ -91,7 +91,7 @@ export default function Header() {
           ) : (
             <Link
               to="/login"
-              className="flex items-center gap-2 rounded-full text-sm font-medium no-underline transition-all duration-200"
+              className="flex items-center gap-2 rounded-full text-sm font-medium no-underline transition-all duration-200 text-white"
               style={{
                 background: 'var(--color-primary)',
                 color: '#fff',

@@ -9,7 +9,7 @@ const AGENT_META: Record<string, { name: string; avatar: string; color: string }
   alex:  { name: 'Alex',  avatar: '👨‍💻', color: '#4ade80' },
   luna:  { name: 'Luna',  avatar: '🎨', color: '#c084fc' },
   sarah: { name: 'Sarah', avatar: '🔍', color: '#facc15' },
-  assistant: { name: 'Assistant', avatar: '🤖', color: '#6366f1' },
+  assistant: { name: 'Assistant', avatar: '🤖', color: '#3b82f6' },
 };
 
 // ── 简易 Markdown 渲染 ───────────────────────────────────
@@ -22,9 +22,9 @@ function renderMarkdown(text: string) {
       const lang = lines[0]?.trim() || '';
       const code = lang ? lines.slice(1).join('\n') : lines.join('\n');
       return (
-        <pre key={i} className="my-2 p-3 rounded-lg text-xs overflow-x-auto" style={{ background: '#09090b' }}>
-          {lang && <div className="text-[10px] mb-1" style={{ color: '#555' }}>{lang}</div>}
-          <code style={{ color: '#e5e5e5' }}>{code}</code>
+        <pre key={i} className="my-2 p-3 rounded-lg text-xs overflow-x-auto" style={{ background: '#ffffff' }}>
+          {lang && <div className="text-[10px] mb-1" style={{ color: '#94a3b8' }}>{lang}</div>}
+          <code style={{ color: '#0f172a' }}>{code}</code>
         </pre>
       );
     }
@@ -34,7 +34,7 @@ function renderMarkdown(text: string) {
       <span key={i}>
         {inlineParts.map((ip, j) =>
           ip.startsWith('`') && ip.endsWith('`') ? (
-            <code key={j} className="px-1.5 py-0.5 rounded text-xs" style={{ background: '#18181b', color: '#c084fc' }}>
+            <code key={j} className="px-1.5 py-0.5 rounded text-xs" style={{ background: '#f8fafc', color: '#c084fc' }}>
               {ip.slice(1, -1)}
             </code>
           ) : (
@@ -88,10 +88,10 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
   return (
     <div className="flex flex-col h-full">
       {/* ── 顶栏 ── */}
-      <div className="flex items-center justify-between px-4 h-11 shrink-0" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+      <div className="flex items-center justify-between px-4 h-11 shrink-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
         <div className="flex items-center gap-2 text-xs">
-          <span style={{ color: '#888' }}>Mode:</span>
-          <span className="font-medium capitalize" style={{ color: '#6366f1' }}>{mode}</span>
+          <span style={{ color: '#64748b' }}>Mode:</span>
+          <span className="font-medium capitalize" style={{ color: '#3b82f6' }}>{mode}</span>
         </div>
         {currentAgent && (
           <div className="flex items-center gap-1.5 text-xs">
@@ -130,14 +130,14 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
                   <div
                     className="p-4 text-sm leading-relaxed"
                     style={{
-                      background: isUser ? '#1a2744' : '#18181b',
+                      background: isUser ? '#1a2744' : '#f8fafc',
                       borderRadius: isUser ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
                       color: '#ddd',
                     }}
                   >
                     {renderMarkdown(msg.content)}
                     {msg.isStreaming && (
-                      <span className="inline-block w-1.5 h-4 ml-0.5 animate-pulse rounded-sm" style={{ background: '#6366f1' }} />
+                      <span className="inline-block w-1.5 h-4 ml-0.5 animate-pulse rounded-sm" style={{ background: '#3b82f6' }} />
                     )}
                   </div>
 
@@ -154,7 +154,7 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
         {/* 加载中指示 */}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="flex items-center gap-2 p-4 rounded-2xl text-xs" style={{ background: '#18181b', color: '#888' }}>
+            <div className="flex items-center gap-2 p-4 rounded-2xl text-xs" style={{ background: '#f8fafc', color: '#64748b' }}>
               <Loader2 size={14} className="animate-spin" />
               Thinking…
             </div>
@@ -172,9 +172,9 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
               onClick={() => onModeChange(m)}
               className="px-3 py-1 text-[11px] rounded-lg capitalize transition-all"
               style={{
-                background: mode === m ? '#6366f120' : 'transparent',
-                color: mode === m ? '#6366f1' : '#555',
-                border: mode === m ? '1px solid #6366f140' : '1px solid transparent',
+                background: mode === m ? '#3b82f620' : 'transparent',
+                color: mode === m ? '#3b82f6' : '#555',
+                border: mode === m ? '1px solid #3b82f640' : '1px solid transparent',
               }}
             >
               {m}
@@ -182,7 +182,7 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
           ))}
         </div>
 
-        <div className="flex items-end gap-2 p-2 rounded-xl" style={{ background: '#111113', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="flex items-end gap-2 p-2 rounded-xl" style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.06)' }}>
           <textarea
             ref={textareaRef}
             value={input}
@@ -191,13 +191,13 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
             placeholder="Describe what you want to build…"
             rows={1}
             className="flex-1 bg-transparent text-sm resize-none outline-none placeholder:text-gray-600"
-            style={{ color: '#e5e5e5', maxHeight: '160px' }}
+            style={{ color: '#0f172a', maxHeight: '160px' }}
           />
           <button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
             className="p-2 rounded-lg transition-colors shrink-0 disabled:opacity-30"
-            style={{ background: '#6366f1' }}
+            style={{ background: '#3b82f6' }}
           >
             <Send size={14} />
           </button>

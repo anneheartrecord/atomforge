@@ -11,10 +11,10 @@ export default function AgentCard({ agent, status, output }: AgentCardProps) {
   const borderColor =
     status === 'working' ? agent.color :
     status === 'done' ? '#4ade8060' :
-    'rgba(255,255,255,0.06)';
+    'rgba(0,0,0,0.06)';
 
   const statusBadge = {
-    idle:    { icon: <Minus size={10} />, label: 'Idle',    bg: '#ffffff08', color: '#555' },
+    idle:    { icon: <Minus size={10} />, label: 'Idle',    bg: '#ffffff08', color: '#94a3b8' },
     working: { icon: <Loader2 size={10} className="animate-spin" />, label: 'Working', bg: `${agent.color}20`, color: agent.color },
     done:    { icon: <Check size={10} />,  label: 'Done',    bg: '#4ade8020', color: '#4ade80' },
   }[status];
@@ -23,7 +23,7 @@ export default function AgentCard({ agent, status, output }: AgentCardProps) {
     <div
       className="rounded-xl p-3 transition-all duration-300"
       style={{
-        background: '#111113',
+        background: '#ffffff',
         border: `1px solid ${borderColor}`,
         ...(status === 'working' ? { boxShadow: `0 0 20px ${agent.color}10` } : {}),
       }}
@@ -39,8 +39,8 @@ export default function AgentCard({ agent, status, output }: AgentCardProps) {
 
         {/* 名字 + 职位 */}
         <div className="flex-1 min-w-0">
-          <div className="text-xs font-medium" style={{ color: '#e5e5e5' }}>{agent.name}</div>
-          <div className="text-[11px]" style={{ color: '#555' }}>{agent.title}</div>
+          <div className="text-xs font-medium" style={{ color: '#0f172a' }}>{agent.name}</div>
+          <div className="text-[11px]" style={{ color: '#94a3b8' }}>{agent.title}</div>
         </div>
 
         {/* 状态 badge */}
@@ -55,7 +55,7 @@ export default function AgentCard({ agent, status, output }: AgentCardProps) {
 
       {/* 已完成时显示摘要输出 */}
       {status === 'done' && output && (
-        <div className="mt-2 text-[11px] leading-relaxed" style={{ color: '#666' }}>
+        <div className="mt-2 text-[11px] leading-relaxed" style={{ color: '#64748b' }}>
           {output}
         </div>
       )}

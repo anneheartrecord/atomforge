@@ -1,41 +1,42 @@
 @import "tailwindcss";
 
-/* AtomForge — Atoms.dev inspired dark theme (refined) */
+/* AtomForge — Light theme inspired by personal-site (小清新) */
 :root {
-  /* Primary — a warmer, more modern blue-violet */
-  --color-primary: #6366f1;
-  --color-primary-hover: #4f46e5;
-  --color-primary-light: rgba(99, 102, 241, 0.15);
+  /* Primary — clean blue */
+  --color-primary: #3b82f6;
+  --color-primary-hover: #2563eb;
+  --color-primary-light: rgba(59, 130, 246, 0.08);
+  --color-primary-lighter: rgba(59, 130, 246, 0.04);
 
-  /* Backgrounds — slightly warmer blacks (not pure #000) */
-  --color-bg-dark: #09090b;
-  --color-bg-card: #111113;
-  --color-bg-elevated: #18181b;
-  --color-bg-input: #1c1c21;
-  --color-bg-surface: #27272a;
+  /* Backgrounds — white & soft gray */
+  --color-bg-dark: #ffffff;
+  --color-bg-card: #ffffff;
+  --color-bg-elevated: #f8fafc;
+  --color-bg-input: #f1f5f9;
+  --color-bg-surface: #e2e8f0;
 
-  /* Borders — subtle warm tones */
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-hover: rgba(255, 255, 255, 0.16);
-  --color-border-focus: rgba(99, 102, 241, 0.5);
+  /* Borders — soft */
+  --color-border: #e2e8f0;
+  --color-border-hover: #cbd5e1;
+  --color-border-focus: rgba(59, 130, 246, 0.5);
 
-  /* Text — high contrast hierarchy */
-  --color-text-primary: #fafafa;
-  --color-text-secondary: #a1a1aa;
-  --color-text-muted: #71717a;
-  --color-text-accent: #818cf8;
+  /* Text — clean hierarchy */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94a3b8;
+  --color-text-accent: #3b82f6;
 
-  /* Agent colors — refined palette */
+  /* Agent colors */
   --color-emma: #f472b6;
-  --color-bob: #22d3ee;
-  --color-alex: #818cf8;
-  --color-luna: #fbbf24;
-  --color-sarah: #a78bfa;
+  --color-bob: #06b6d4;
+  --color-alex: #3b82f6;
+  --color-luna: #f59e0b;
+  --color-sarah: #8b5cf6;
 
-  /* Accent / Status */
-  --color-success: #34d399;
-  --color-error: #f87171;
-  --color-warning: #fbbf24;
+  /* Status */
+  --color-success: #10b981;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
 }
 
 * {
@@ -45,11 +46,11 @@
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
-  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: -apple-system, "SF Pro Display", system-ui, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   background-color: var(--color-bg-dark);
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
@@ -59,18 +60,18 @@ body {
 
 /* Global spacing defaults for buttons and inputs */
 button {
-  padding: 0.625rem 1.25rem; /* py-2.5 px-5 baseline */
+  padding: 0.625rem 1.25rem;
 }
 
 input, textarea, select {
-  padding: 0.75rem 1.25rem; /* py-3 px-5 baseline */
+  padding: 0.75rem 1.25rem;
 }
 
 code, pre {
-  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+  font-family: "SF Mono", ui-monospace, "Fira Code", Consolas, monospace;
 }
 
-/* Scrollbar styling */
+/* Scrollbar — subtle */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -81,26 +82,40 @@ code, pre {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.1);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.2);
 }
 
-/* Glass effect utility — warmer, more visible */
+/* Glass effect — light frosted */
 .glass {
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  background: rgba(17, 17, 19, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-/* Gradient text — refined multi-stop */
+/* Gradient text — blue to purple */
 .gradient-text {
-  background: linear-gradient(135deg, #818cf8 0%, #c084fc 40%, #22d3ee 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Card base style */
+.card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
 }
