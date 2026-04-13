@@ -47,13 +47,29 @@ export default function Login() {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { full_name: email.split('@')[0] } },
+        });
         if (error) throw error;
-        setMessage('Check your email to confirm your account!');
+        // If auto-confirm is enabled, user is logged in immediately
+        if (data.session) {
+          localStorage.setItem('atomforge_user', JSON.stringify({ name: email.split('@')[0], email }));
+          navigate('/dashboard');
+        } else {
+          setMessage('Check your email to confirm your account, then sign in.');
+        }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        localStorage.setItem('atomforge_user', JSON.stringify({ name: email.split('@')[0], email }));
+        if (data.user) {
+          localStorage.setItem('atomforge_user', JSON.stringify({
+            name: data.user.user_metadata?.full_name || email.split('@')[0],
+            email,
+            avatar_url: data.user.user_metadata?.avatar_url,
+          }));
+        }
         navigate('/dashboard');
       }
     } catch (err: unknown) {

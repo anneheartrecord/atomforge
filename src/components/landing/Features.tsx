@@ -36,8 +36,8 @@ const features: Feature[] = [
 
 export default function Features() {
   return (
-    <section className="px-8 py-32">
-      <div className="mx-auto max-w-5xl">
+    <section style={{ padding: '128px 32px' }}>
+      <div style={{ maxWidth: 960, margin: '0 auto' }}>
         <h2
           className="text-center font-bold"
           style={{ color: 'var(--color-text-primary)', fontSize: 36, marginBottom: 16 }}

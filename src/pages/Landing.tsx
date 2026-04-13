@@ -13,34 +13,33 @@ export default function Landing() {
 
       {/* Footer */}
       <footer
-        className="px-6 py-12"
         style={{
           borderTop: '1px solid var(--color-border)',
           background: 'var(--color-bg-dark)',
+          padding: '48px 32px',
         }}
       >
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 md:flex-row">
-          <span
-            className="text-sm font-medium"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
+        <div style={{ maxWidth: 1152, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+          <span style={{ color: 'var(--color-text-muted)', fontSize: 14, fontWeight: 500 }}>
             © 2026 AtomForge. Built with AI.
           </span>
-          <div className="flex gap-6">
-            {['GitHub', 'Docs', 'Discord'].map((link) => (
+          <div style={{ display: 'flex', gap: 24 }}>
+            {[
+              { label: 'Product Docs', href: 'https://github.com/anneheartrecord/atomforge/blob/main/docs/PRODUCT.md' },
+              { label: 'Technical Docs', href: 'https://github.com/anneheartrecord/atomforge/blob/main/docs/TECHNICAL.md' },
+              { label: 'Design Notes', href: 'https://github.com/anneheartrecord/atomforge/blob/main/docs/DESIGN_NOTES.md' },
+              { label: 'GitHub', href: 'https://github.com/anneheartrecord/atomforge' },
+            ].map((link) => (
               <a
-                key={link}
-                href="#"
-                className="text-sm no-underline transition-colors duration-200"
-                style={{ color: 'var(--color-text-muted)' }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.color = 'var(--color-text-secondary)')
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = 'var(--color-text-muted)')
-                }
+                key={link.label}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: 'var(--color-text-muted)', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-primary)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-muted)')}
               >
-                {link}
+                {link.label}
               </a>
             ))}
           </div>

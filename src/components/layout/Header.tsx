@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, LogIn, LogOut } from 'lucide-react';
+import { LayoutDashboard, LogIn, LogOut, FileText } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 
@@ -95,6 +95,19 @@ export default function Header() {
             <LayoutDashboard size={16} />
             Dashboard
           </Link>
+
+          <a
+            href="https://github.com/anneheartrecord/atomforge/blob/main/docs/PRODUCT.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-sm no-underline transition-colors duration-200"
+            style={{ color: 'var(--color-text-secondary)' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-text-primary)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-secondary)')}
+          >
+            <FileText size={16} />
+            Docs
+          </a>
 
           {user ? (
             <div className="flex items-center gap-3">

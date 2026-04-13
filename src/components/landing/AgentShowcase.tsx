@@ -45,8 +45,8 @@ const agents: (Pick<AgentConfig, 'role' | 'name' | 'title' | 'description' | 'co
 
 export default function AgentShowcase() {
   return (
-    <section className="px-8 py-32" style={{ background: 'var(--color-bg-dark)' }}>
-      <div className="mx-auto max-w-6xl">
+    <section style={{ background: 'var(--color-bg-dark)', padding: '128px 32px' }}>
+      <div style={{ maxWidth: 1152, margin: '0 auto' }}>
         <h2
           className="text-center font-bold tracking-tight"
           style={{ color: 'var(--color-text-primary)', fontSize: 36, marginBottom: 16 }}
