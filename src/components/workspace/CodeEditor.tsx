@@ -40,11 +40,10 @@ export default function CodeEditor({ files, activeFile, onFileChange, onContentC
   const content = files[activeFile] ?? '';
 
   return (
-    <div className="flex flex-col flex-1 min-w-0 min-h-0">
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0, minHeight: 0 }}>
       {/* ── Tab Bar ── */}
       <div
-        className="flex items-center h-10 shrink-0 overflow-x-auto"
-        style={{ background: '#ffffff', borderBottom: '1px solid rgba(0,0,0,0.06)' }}
+        style={{ display: 'flex', alignItems: 'center', height: 40, flexShrink: 0, overflowX: 'auto', background: '#ffffff', borderBottom: '1px solid rgba(0,0,0,0.06)' }}
       >
         {Object.keys(files).map(name => {
           const active = name === activeFile;
@@ -52,19 +51,32 @@ export default function CodeEditor({ files, activeFile, onFileChange, onContentC
             <button
               key={name}
               onClick={() => onFileChange(name)}
-              className="flex items-center gap-1.5 px-4 py-2 h-full text-xs shrink-0 transition-colors group"
+              className="group"
               style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                paddingLeft: 16,
+                paddingRight: 16,
+                paddingTop: 8,
+                paddingBottom: 8,
+                height: '100%',
+                fontSize: 12,
+                flexShrink: 0,
+                border: 'none',
+                cursor: 'pointer',
                 background: active ? '#ffffff' : 'transparent',
                 color: active ? '#0f172a' : '#666',
                 borderRight: '1px solid rgba(255,255,255,0.04)',
                 borderBottom: active ? '2px solid #3b82f6' : '2px solid transparent',
               }}
             >
-              <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: fileIconColor(name) }} />
+              <span style={{ width: 6, height: 6, borderRadius: '50%', flexShrink: 0, background: fileIconColor(name) }} />
               {name}
               <X
                 size={12}
-                className="ml-1 opacity-0 group-hover:opacity-50 hover:!opacity-100 transition-opacity"
+                className="opacity-0 group-hover:opacity-50 hover:!opacity-100"
+                style={{ marginLeft: 4 }}
                 onClick={e => { e.stopPropagation(); /* close tab logic */ }}
               />
             </button>
@@ -73,7 +85,7 @@ export default function CodeEditor({ files, activeFile, onFileChange, onContentC
       </div>
 
       {/* ── Monaco Editor ── */}
-      <div className="flex-1 min-h-0">
+      <div style={{ flex: 1, minHeight: 0 }}>
         <Editor
           theme="vs-dark"
           language={language}

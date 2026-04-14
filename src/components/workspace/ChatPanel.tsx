@@ -22,8 +22,8 @@ function renderMarkdown(text: string) {
       const lang = lines[0]?.trim() || '';
       const code = lang ? lines.slice(1).join('\n') : lines.join('\n');
       return (
-        <pre key={i} className="my-2 p-3 rounded-lg text-xs overflow-x-auto" style={{ background: '#ffffff' }}>
-          {lang && <div className="text-[10px] mb-1" style={{ color: '#94a3b8' }}>{lang}</div>}
+        <pre key={i} style={{ marginTop: 8, marginBottom: 8, padding: 12, borderRadius: 8, fontSize: 12, overflowX: 'auto', background: '#ffffff' }}>
+          {lang && <div style={{ fontSize: 10, marginBottom: 4, color: '#94a3b8' }}>{lang}</div>}
           <code style={{ color: '#0f172a' }}>{code}</code>
         </pre>
       );
@@ -34,11 +34,11 @@ function renderMarkdown(text: string) {
       <span key={i}>
         {inlineParts.map((ip, j) =>
           ip.startsWith('`') && ip.endsWith('`') ? (
-            <code key={j} className="px-1.5 py-0.5 rounded text-xs" style={{ background: '#f8fafc', color: '#c084fc' }}>
+            <code key={j} style={{ paddingLeft: 6, paddingRight: 6, paddingTop: 2, paddingBottom: 2, borderRadius: 4, fontSize: 12, background: '#f8fafc', color: '#c084fc' }}>
               {ip.slice(1, -1)}
             </code>
           ) : (
-            <span key={j} className="whitespace-pre-wrap">{ip}</span>
+            <span key={j} style={{ whiteSpace: 'pre-wrap' }}>{ip}</span>
           )
         )}
       </span>

@@ -75,21 +75,29 @@ export default function Preview({ html, title = 'Preview' }: PreviewProps) {
 
       {/* ── iframe 容器 ── */}
       <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', overflow: 'auto', padding: 0, background: '#0a0a0a' }}>
-        <iframe
-          key={refreshKey}
-          ref={iframeRef}
-          srcDoc={html}
-          title={title}
-          sandbox="allow-scripts allow-same-origin"
-          style={{
-            border: 0,
-            height: '100%',
-            width: iframeWidth,
-            maxWidth: '100%',
-            background: '#fff',
-            ...(device === 'mobile' ? { borderRadius: 12, margin: '12px auto', boxShadow: '0 0 0 1px rgba(0,0,0,0.06)' } : {}),
-          }}
-        />
+        {html.trim() ? (
+          <iframe
+            key={refreshKey}
+            ref={iframeRef}
+            srcDoc={html}
+            title={title}
+            sandbox="allow-scripts allow-same-origin"
+            style={{
+              border: 0,
+              height: '100%',
+              width: iframeWidth,
+              maxWidth: '100%',
+              background: '#fff',
+              ...(device === 'mobile' ? { borderRadius: 12, margin: '12px auto', boxShadow: '0 0 0 1px rgba(0,0,0,0.06)' } : {}),
+            }}
+          />
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', width: '100%', color: '#64748b', gap: 8 }}>
+            <span style={{ fontSize: 32 }}>💬</span>
+            <span style={{ fontSize: 14 }}>开始对话以生成代码</span>
+            <span style={{ fontSize: 12, color: '#94a3b8' }}>Start chatting to generate code</span>
+          </div>
+        )}
       </div>
     </div>
   );

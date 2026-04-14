@@ -10,70 +10,20 @@ import RaceView from '../components/race/RaceView';
 import { streamGenerateCode } from '../services/gemini';
 import { runTeamPipeline } from '../agents/teamOrchestrator';
 import { runRace } from '../agents/raceRunner';
-import { AGENTS as AGENTS_LIST } from '../agents/types';
-import { getConversations, addConversation, saveArtifact } from '../services/supabase';
-import type { ChatMessage, WorkspaceMode, AgentConfig, TeamStep, RaceEntry } from '../types';
+import { getConversations, addConversation, saveArtifact, getProject } from '../services/supabase';
+import type { ChatMessage, WorkspaceMode, TeamStep, RaceEntry } from '../types';
 
-// ── 从全局 AGENTS 数组构建 Record，方便按 role 查找 ──────
-const AGENTS: Record<string, AgentConfig> = Object.fromEntries(
-  AGENTS_LIST.map(a => [a.role, a]),
-);
+// ── 默认文件（空，等 AI 生成后才出现）────────────────────
+const DEFAULT_FILES: Record<string, string> = {};
 
-// ── Mock 文件 ─────────────────────────────────────────────
-const DEFAULT_FILES: Record<string, string> = {
-  'index.html': `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AtomForge Preview</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <div id="app">
-    <h1>Hello, AtomForge ⚛️</h1>
-    <p>Start chatting to generate code.</p>
-  </div>
-  <script src="script.js"><\/script>
-</body>
-</html>`,
-  'style.css': `* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #ffffff;
-  color: #0f172a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-}
-h1 { font-size: 2rem; margin-bottom: .5rem; }
-p  { color: #888; }`,
-  'script.js': `console.log('AtomForge ready');`,
-};
+// ── Mock 消息（清空，真实数据来自 Supabase）─────────────
+const MOCK_MESSAGES: ChatMessage[] = [];
 
-// ── Mock 消息 ─────────────────────────────────────────────
-const MOCK_MESSAGES: ChatMessage[] = [
-  { id: '1', role: 'user',      content: 'Create a landing page with a hero section', timestamp: new Date(Date.now() - 120000).toISOString() },
-  { id: '2', role: 'alex',      content: "Sure! I'll build a responsive hero section with a gradient background and CTA button.\n\n```html\n<section class=\"hero\">\n  <h1>Welcome to AtomForge</h1>\n  <p>AI-powered code generation</p>\n  <button>Get Started</button>\n</section>\n```", timestamp: new Date(Date.now() - 60000).toISOString() },
-  { id: '3', role: 'user',      content: 'Looks great, can you also add dark mode?', timestamp: new Date().toISOString() },
-];
+// ── Mock Team Steps（清空）─────────────────────────────────
+const MOCK_TEAM_STEPS: TeamStep[] = [];
 
-// ── Mock Team Steps ───────────────────────────────────────
-const MOCK_TEAM_STEPS: TeamStep[] = [
-  { agent: AGENTS.emma,  status: 'completed', output: 'Defined user stories for the landing page.' },
-  { agent: AGENTS.bob,   status: 'completed', output: 'Designed component architecture with Hero, Features, CTA sections.' },
-  { agent: AGENTS.alex,  status: 'running',   output: 'Writing React components...' },
-  { agent: AGENTS.luna,  status: 'pending',   output: '' },
-  { agent: AGENTS.sarah, status: 'pending',   output: '' },
-];
-
-// ── Mock Race Entries ─────────────────────────────────────
-const MOCK_RACE_ENTRIES: RaceEntry[] = [
-  { id: 'r1', prompt: 'Landing page', output: '<html><body style="background:#111;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif"><div><h1 style="font-size:3rem">Design A</h1><p style="color:#888">Minimalist approach</p></div></body></html>', status: 'completed' },
-  { id: 'r2', prompt: 'Landing page', output: '<html><body style="background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif"><div style="text-align:center"><h1 style="font-size:3rem;background:linear-gradient(90deg,#3b82f6,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Design B</h1><p style="color:#aaa">Gradient style</p></div></body></html>', status: 'completed' },
-  { id: 'r3', prompt: 'Landing page', output: '<html><body style="background:#ffffff;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-family:monospace"><div style="border:1px solid #333;padding:3rem;border-radius:12px"><h1 style="color:#4ade80">Design C</h1><p style="color:#666">Terminal vibes</p></div></body></html>', status: 'running' },
-];
+// ── Mock Race Entries（清空）───────────────────────────────
+const MOCK_RACE_ENTRIES: RaceEntry[] = [];
 
 // ── 拖拽 Hook ─────────────────────────────────────────────
 function useDraggablePanel(initialLeft: number, initialRight: number) {
@@ -180,15 +130,45 @@ function TeamPromptInput({ onSend, isLoading }: { onSend: (msg: string) => void;
 export default function Workspace() {
   const { id } = useParams<{ id: string }>();
   const pid = id || '';
-  const [mode, setMode] = useState<WorkspaceMode>('engineer');
+  // 优先从 sessionStorage 读取 mode（Dashboard 创建时写入）
+  const initialMode = (pid && sessionStorage.getItem(`project_mode_${pid}`)) as WorkspaceMode | null;
+  const [mode, setMode] = useState<WorkspaceMode>(initialMode || 'engineer');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [files, setFiles] = useState<Record<string, string>>(DEFAULT_FILES);
-  const [activeFile, setActiveFile] = useState('index.html');
+  const [activeFile, setActiveFile] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [teamSteps, setTeamSteps] = useState<TeamStep[]>(MOCK_TEAM_STEPS);
   const [raceEntries, setRaceEntries] = useState<RaceEntry[]>(MOCK_RACE_ENTRIES);
 
   const { containerRef, leftW, centerW, rightW, onMouseDown } = useDraggablePanel(30, 35);
+
+  // 加载项目信息（包括 mode）
+  useEffect(() => {
+    if (!pid) return;
+    let cancelled = false;
+
+    async function loadProject() {
+      try {
+        const project = await getProject(pid);
+        if (cancelled) return;
+        if (project?.mode) {
+          setMode(project.mode);
+        }
+      } catch {
+        // 读取失败不影响，使用默认 mode
+      }
+    }
+
+    // 只在没有从 sessionStorage 读到 mode 时才从 Supabase 加载
+    if (!initialMode) {
+      loadProject();
+    } else {
+      // 用完就清理
+      sessionStorage.removeItem(`project_mode_${pid}`);
+    }
+
+    return () => { cancelled = true; };
+  }, [pid, initialMode]);
 
   // 加载历史对话
   useEffect(() => {
@@ -340,6 +320,20 @@ export default function Workspace() {
 
     setIsLoading(false);
   }, [mode, pid]);
+
+  // 从 Dashboard 快速输入框跳转过来时，自动发送第一句话
+  const quickPromptSent = useRef(false);
+  useEffect(() => {
+    if (!pid || quickPromptSent.current) return;
+    const key = `quick_prompt_${pid}`;
+    const prompt = sessionStorage.getItem(key);
+    if (prompt) {
+      sessionStorage.removeItem(key);
+      quickPromptSent.current = true;
+      // 延迟一帧确保组件已就绪
+      requestAnimationFrame(() => handleSend(prompt));
+    }
+  }, [pid, handleSend]);
 
   const handleContentChange = useCallback((file: string, content: string) => {
     setFiles(prev => ({ ...prev, [file]: content }));

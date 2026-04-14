@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string;
-const MODEL_NAME = 'gemini-2.5-pro-preview-05-06';
+const MODEL_NAME = 'gemini-2.0-flash';
 
 const genAI = new GoogleGenerativeAI(API_KEY);
 
@@ -55,7 +55,10 @@ When generating code, output a single, self-contained HTML file:
 - Make the UI responsive and visually polished
 - Do NOT use markdown code fences — return raw HTML only
 - If the user asks for a component or app, wrap it in a full HTML document
-- If external libraries help, load them from CDN (e.g., Tailwind, Chart.js, Alpine.js)`;
+- If external libraries help, load them from CDN (e.g., Tailwind, Chart.js, Alpine.js)
+
+## Language Rule
+Always respond in Chinese (中文). All explanations, comments, and documentation should be in Chinese. Code comments can be in English.`;
 
 /**
  * 生成代码（非流式）

@@ -11,40 +11,41 @@ export default function RaceView({ entries, onSelect }: RaceViewProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   return (
-    <div className="flex flex-col h-full" style={{ background: '#ffffff' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#ffffff' }}>
       {/* Header */}
       <div
-        className="flex items-center gap-3 px-4 h-10 shrink-0 text-xs font-semibold"
-        style={{ borderBottom: '1px solid rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.5)' }}
+        style={{ display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 16, paddingRight: 16, height: 40, flexShrink: 0, fontSize: 12, fontWeight: 600, borderBottom: '1px solid rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.5)' }}
       >
         <Trophy size={14} style={{ color: '#FFE66D' }} />
         Race Mode — {entries.length} variants
       </div>
 
       {/* Race entries */}
-      <div className="flex-1 overflow-auto p-4">
-        <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${Math.min(entries.length, 3)}, 1fr)` }}>
+      <div style={{ flex: 1, overflow: 'auto', padding: 16 }}>
+        <div style={{ display: 'grid', gap: 16, gridTemplateColumns: `repeat(${Math.min(entries.length, 3)}, 1fr)` }}>
           {entries.map((entry, index) => (
             <div
               key={entry.id}
-              className="flex flex-col rounded-2xl overflow-hidden transition-all"
               style={{
+                display: 'flex',
+                flexDirection: 'column',
+                borderRadius: 16,
+                overflow: 'hidden',
                 background: '#ffffff',
                 border: expandedId === entry.id ? '1px solid #3b82f6' : '1px solid rgba(0,0,0,0.06)',
               }}
             >
               {/* Preview header - macOS dots */}
               <div
-                className="flex items-center justify-between px-3 h-8 shrink-0"
-                style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 12, paddingRight: 12, height: 32, flexShrink: 0, borderBottom: '1px solid rgba(0,0,0,0.06)' }}
               >
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full" style={{ background: '#ff5f57' }} />
-                    <div className="w-2 h-2 rounded-full" style={{ background: '#febc2e' }} />
-                    <div className="w-2 h-2 rounded-full" style={{ background: '#28c840' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#ff5f57' }} />
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#febc2e' }} />
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#28c840' }} />
                   </div>
-                  <span className="text-xs font-medium" style={{ color: 'rgba(0,0,0,0.4)' }}>
+                  <span style={{ fontSize: 12, fontWeight: 500, color: 'rgba(0,0,0,0.4)' }}>
                     Variant {String.fromCharCode(65 + index)}
                   </span>
                 </div>
@@ -53,35 +54,33 @@ export default function RaceView({ entries, onSelect }: RaceViewProps) {
               </div>
 
               {/* Preview iframe */}
-              <div style={{ height: expandedId === entry.id ? '400px' : '200px', transition: 'height 0.3s ease' }}>
+              <div style={{ height: expandedId === entry.id ? 400 : 200, transition: 'height 0.3s ease' }}>
                 {entry.status === 'running' ? (
-                  <div className="flex items-center justify-center h-full">
-                    <div className="flex flex-col items-center gap-3">
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
                       <Loader2 size={24} className="animate-spin" style={{ color: '#3b82f6' }} />
-                      <span className="text-xs" style={{ color: 'rgba(0,0,0,0.3)' }}>Generating...</span>
+                      <span style={{ fontSize: 12, color: 'rgba(0,0,0,0.3)' }}>Generating...</span>
                     </div>
                   </div>
                 ) : entry.status === 'completed' ? (
                   <iframe
                     srcDoc={entry.output}
                     title={`Variant ${String.fromCharCode(65 + index)}`}
-                    className="w-full h-full border-0"
                     sandbox="allow-scripts"
-                    style={{ background: '#fff' }}
+                    style={{ width: '100%', height: '100%', border: 0, background: '#fff' }}
                   />
                 ) : (
-                  <div className="flex items-center justify-center h-full">
-                    <span className="text-xs" style={{ color: 'rgba(0,0,0,0.15)' }}>Waiting...</span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                    <span style={{ fontSize: 12, color: 'rgba(0,0,0,0.15)' }}>Waiting...</span>
                   </div>
                 )}
               </div>
 
               {/* Actions */}
-              <div className="flex items-center justify-between px-3 h-10 shrink-0" style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 12, paddingRight: 12, height: 40, flexShrink: 0, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
                 <button
                   onClick={() => setExpandedId(expandedId === entry.id ? null : entry.id)}
-                  className="flex items-center gap-1 px-2 py-1 rounded-md text-xs cursor-pointer border-0"
-                  style={{ background: 'rgba(0,0,0,0.04)', color: 'rgba(0,0,0,0.5)' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 4, paddingLeft: 8, paddingRight: 8, paddingTop: 4, paddingBottom: 4, borderRadius: 6, fontSize: 12, cursor: 'pointer', border: 0, background: 'rgba(0,0,0,0.04)', color: 'rgba(0,0,0,0.5)' }}
                 >
                   <Eye size={12} />
                   {expandedId === entry.id ? 'Collapse' : 'Expand'}
@@ -89,8 +88,7 @@ export default function RaceView({ entries, onSelect }: RaceViewProps) {
                 <button
                   onClick={() => onSelect(entry.id)}
                   disabled={entry.status !== 'completed'}
-                  className="flex items-center gap-1 px-3 py-1 rounded-md text-xs font-medium cursor-pointer border-0 disabled:opacity-30"
-                  style={{ background: '#3b82f6', color: '#fff' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 4, paddingLeft: 12, paddingRight: 12, paddingTop: 4, paddingBottom: 4, borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: entry.status === 'completed' ? 'pointer' : 'not-allowed', border: 0, background: '#3b82f6', color: '#fff', opacity: entry.status !== 'completed' ? 0.3 : 1 }}
                 >
                   <Check size={12} />
                   Select
