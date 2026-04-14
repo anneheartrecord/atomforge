@@ -2,51 +2,43 @@
 
 ## 1. Implementation Approach & Key Trade-offs
 
-### Architecture
+### Feature Priority
 
-AtomForge is a pure frontend SPA that connects directly to Gemini API and Supabase from the browser — zero backend servers required. Users describe what they want, an AI Agent team collaborates to generate runnable code, and the result renders live in an iframe.
+Based on deep hands-on experience with Atoms.dev, I identified these features as critical for an AI Agent code generation platform MVP:
 
-```
-React SPA (Vite + TypeScript)
-  ├── Gemini 2.5 Pro API  ← Direct browser calls (CORS supported)
-  ├── Supabase            ← Auth + PostgreSQL + RLS
-  └── Vercel              ← Auto-deploy
-```
+**Foundation layer**: Login, code generation, live preview, download, GitHub push — the baseline for a usable product.
 
-### Key Trade-offs
+**Agent core layer**: Multi-turn context management, user memory extraction & injection, Team Mode (multi-agent pipeline), Race Mode (parallel comparison) — the essential leap from Chatbot to Agent.
 
-**React + Vite vs Next.js**
-Chose SPA over SSR. This is a tool-type app with no SEO requirements. SPA builds to pure static files, deploys to Vercel with zero config. Next.js App Router and Server Components would be pure complexity overhead here.
+**Interaction design layer**: Following a key design decision from Atoms — **hiding model selection and fixing Team members**. This is an excellent trade-off: lowering the barrier to entry so non-technical users can start immediately. No need to understand GPT-4 vs Claude, no need to configure which agents do what — just describe what you want.
 
-**iframe srcdoc vs WebContainer**
-Chose the lightweight approach. WebContainer can run full Node.js but requires a paid license, has slow cold starts, and high memory usage. AI-generated code is self-contained HTML (CSS/JS all inline), so iframe srcdoc is zero-dependency, zero-latency, and sufficient.
+My implementation strategy: **prioritize getting all core features running at minimum viable level**, rather than perfecting any single feature.
 
-**Supabase vs IndexedDB**
-Chose cloud persistence. IndexedDB is local-only — switch devices and data is gone. Supabase provides real cross-device cloud storage + built-in Auth (Google OAuth in a few lines) + RLS row-level security.
+### Architecture Trade-offs
 
-**Gemini vs Claude/GPT**
-Gemini supports direct browser calls (CORS), no backend proxy needed. This keeps the entire architecture purely "zero backend".
+**Pure frontend + Supabase + Vercel**: For rapid deployment, the project is almost entirely frontend TypeScript. Backend persistence uses Supabase (Auth + PostgreSQL + RLS), deployed on Vercel (auto-deploy on GitHub push), hosted on personal domain `atomforge.charles-cheng.com`. Zero backend servers, zero ops overhead.
 
-**Team Mode: Serial vs Parallel**
-Chose serial. The pipeline's essence is progressive context refinement — the architect needs the PRD, the engineer needs the architecture. Parallel execution would lose the collaboration semantics. Race Mode is where parallel is the right approach.
+**Gemini as LLM**: Coding capability is not consistently stable — sometimes generates high-quality code, sometimes produces incomplete structures. But Gemini's key advantage: browser-direct calls (CORS support), no backend proxy needed, perfectly aligned with the "pure frontend" architecture.
 
-### Multi-Agent Collaboration Design
+**iframe srcdoc over WebContainer**: WebContainer can run full Node.js but needs paid license and slow cold starts. AI-generated code is self-contained HTML (inline CSS/JS), iframe srcdoc is zero-dependency and instant.
 
-**Team Mode** — 5 Agents in a serial pipeline:
+**Team Mode serial over parallel**: Pipeline essence is progressive context refinement — architects need the PRD, engineers need the architecture. Serial ensures input quality for each step.
+
+### Multi-Agent Collaboration
+
+**Team Mode** — 5 fixed roles in serial pipeline:
 ```
 Emma(PM) → Bob(Architect) → Alex(Engineer) → Luna(QA) → Sarah(SEO)
 ```
-Each step's output automatically chains into the next step's context. Progress pushed to UI in real-time via `onStepUpdate` callback.
+Each output chains into the next step's context. Users just describe requirements, everything else is automatic.
 
-**Race Mode** — `Promise.allSettled()` fires 3 parallel Gemini requests, each streaming independently. Users compare in 3 side-by-side iframe previews and pick the best.
+**Race Mode** — `Promise.allSettled()` fires 3 parallel requests, each streaming independently. Users compare in 3 side-by-side iframe previews.
+
+**Agent Memory System** — Automatically extracts user preferences (tech stack, design style) and project context from conversations, stores in Supabase, injects into next conversation.
 
 ### Development Method
 
-Used Claude Code Sub-Agent parallel development:
-- Phase 1: Main Agent builds scaffold, types, routing
-- Phase 2: 3 Sub-Agents in parallel (Services / Pages UI / Workspace core)
-- Phase 3: 4 Sub-Agents in parallel (Docs / Auth / Deploy / Code Review)
-- Total: 7 Sub-Agents, ~30 minutes for initial version
+Claude Code Sub-Agent parallel development, 7 Sub-Agents total, ~30 minutes for initial version.
 
 ---
 
@@ -56,49 +48,62 @@ Used Claude Code Sub-Agent parallel development:
 
 | Feature | Details |
 |---------|---------|
-| Landing Page | White clean theme, SVG animal avatars, feature cards, doc links |
-| Auth System | Google OAuth + Email/Password signup & login + Demo mode |
-| Dashboard | Project CRUD with Supabase persistence, Demo mode fallback |
-| Workspace 3-Panel Layout | Chat / Monaco Editor / Preview, draggable panel widths |
-| Engineer Mode | Gemini streaming code generation, auto HTML extraction to Preview |
-| Team Mode | 5-Agent serial pipeline, real-time progress timeline |
-| Race Mode | 3-way parallel generation, iframe comparison, select best |
-| Code Editor | Monaco Editor, multi-file tabs, vs-dark theme, syntax highlighting |
-| Live Preview | iframe srcdoc, Desktop/Mobile toggle, macOS-style title bar |
-| File Tree | Create/delete files, extension-based icons |
-| Data Persistence | Conversations, projects, artifacts all stored in Supabase (4 tables + RLS) |
-| Platform-Aware System Prompt | Agent knows AtomForge features, answers platform questions with doc links |
-| Docs System | Built-in /docs page with Product / Technical / Design Notes tabs |
-| Deployment | Vercel auto-deploy + custom domain atomforge.charles-cheng.com |
+| Authentication | Google OAuth + Email/Password + Demo mode |
+| Landing Page | White theme, SVG animal avatars, feature cards, doc links |
+| Dashboard | Default chat entry (type and go) + project CRUD |
+| 3-Panel Workspace | Chat / Monaco Editor / Preview, draggable widths |
+| FileTree Toggle | Built into Editor tab bar, one-click hide/show |
+| Engineer Mode | Gemini streaming with multi-turn context (Gemini chat API) |
+| Team Mode | 5-agent serial pipeline with real-time progress |
+| Race Mode | 3-way parallel, iframe comparison, select best |
+| Live Preview | iframe srcdoc, Desktop/Mobile toggle |
+| Code Editor | Monaco Editor, multi-file tabs, syntax highlighting |
+| Markdown Rendering | Bold, italic, code blocks, lists, links in chat |
+| Platform-Aware Prompt | Agent knows AtomForge features, includes doc links |
+| User Memory | Auto-extract preferences/facts, store in Supabase, inject next time |
+| Data Persistence | All data in Supabase (5 tables + RLS) |
+| GitHub Push | Toolbar Git button, input Token + Repo, one-click push |
+| Download Export | Toolbar Download button, export as HTML |
+| Docs System | Built-in /docs with bilingual (CN/EN) support |
+| Deployment | Vercel auto-deploy + atomforge.charles-cheng.com |
+| Chinese Output | System Prompt defaults to Chinese responses |
+| Secret Protection | Pre-commit hook scans for API key leaks |
 
 ### Not Completed
 
-| Feature | Progress | Notes |
-|---------|----------|-------|
-| GitHub Integration UI | Service layer done, UI not wired | `github.ts` has createRepo + pushToGithub, Publish button not connected |
-| Version Rollback | Schema done, UI not built | versions table exists, needs version list and rollback button |
-| Export ZIP | Not started | — |
-| Multi-Model Switch | Not started | Race mode currently Gemini only, could support Claude/GPT comparison |
-| Mobile Responsive | Landing OK, Workspace not adapted | 3-panel layout needs tab-switching for mobile |
+| Feature | Notes |
+|---------|-------|
+| Version snapshots + rollback | Schema exists, UI not built |
+| Multi-model support | Currently Gemini only |
+| Demo showcase gallery | Community templates / App World |
+| Mobile Workspace | 3-panel needs tab-switching for mobile |
 
 ---
 
-## 3. Expansion Plan & Priorities
+## 3. Future Directions
 
-### P0 — 2~3 hours
-1. **GitHub Integration UI** — Wire Publish button to github.ts, dialog for token + repo name input
-2. **Version Snapshots** — Auto-save version on each generation, add version history panel + rollback
+### Near-term Features
 
-### P1 — 3~4 hours
-3. **Multi-Model Support** — Abstract LLMProvider interface, add OpenAI/Claude implementations, Race mode cross-model comparison
-4. **Export ZIP** — Package current files for download
-5. **Workspace Mobile** — Convert 3-panel to tab-switching layout
+**Version Snapshots + Rollback**: Auto-save on each generation. Version history panel with one-click rollback. High-value for iterative development.
 
-### P2 — Future Direction
-6. **WebContainer** — Replace iframe, support npm packages in preview
-7. **Supabase Realtime** — Multi-user real-time collaboration
-8. **Custom Agents** — User-defined roles, prompts, pipeline order
-9. **Template Marketplace** — Community sharing of generated apps, Fork/Remix support
+**Multi-Model + Smart Task Matching**: Not just manual model selection, but automatic task decomposition:
+- Planning & complex architecture → SOTA models (Claude Opus, GPT-4o)
+- Simple code generation → Fast models (Gemini Flash, Claude Haiku)
+- Code review → Analysis-specialized models
+
+**Demo Showcase Gallery**: Built-in high-quality examples. New users immediately see what's possible. One-click Fork/Remix.
+
+### Big Picture
+
+My current takeaway from Atoms-like products: **Atoms got "low entry barrier" right**. Hidden model selection, fixed Team members, one-sentence start — these designs let non-technical people use the platform effectively.
+
+But the trend I observe: **future Agent platforms need to be "easy to start, deep to master"**:
+
+- **Entry level**: Keep the minimal experience — one sentence to generate an app
+- **Advanced level**: Custom Teams (user-defined agents, prompts, pipeline order), model selection, conditional branching between agents, external API/tool integration
+- **Expert level**: Open Agent SDK for programmatic workflow orchestration
+
+Like Notion's success path — appears simple, but underlying capabilities run deep. The competitive moat for Agent platforms isn't "how strong the AI is" (that's the model layer), but **orchestration flexibility and engineering experience polish**.
 
 ---
 
@@ -108,10 +113,10 @@ Used Claude Code Sub-Agent parallel development:
 |-------|-----------|
 | Frontend | React 18 + Vite + TypeScript |
 | Styling | Tailwind CSS + Inline styles (white theme) |
-| AI | Google Gemini 2.5 Pro (streaming) |
+| AI | Google Gemini 2.5 Flash (streaming, multi-turn) |
 | Auth | Supabase Auth (Google OAuth + Email) |
-| Database | Supabase PostgreSQL (RLS row-level security) |
+| Database | Supabase PostgreSQL (5 tables + RLS) |
 | Editor | Monaco Editor |
 | Preview | iframe srcdoc sandbox |
-| Deployment | Vercel (GitHub push auto-deploy) |
+| Deployment | Vercel (auto-deploy) + atomforge.charles-cheng.com |
 | Dev Tools | Claude Code (Agent Team parallel development) |

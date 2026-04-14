@@ -2,51 +2,46 @@
 
 ## 一、实现思路与关键取舍
 
-### 整体架构
+### 功能优先级判断
 
-AtomForge 是一个纯前端 SPA，通过浏览器直连 Gemini API 和 Supabase，不需要任何自建后端服务器。用户描述需求后，AI Agent 团队协作生成可运行的代码，并在 iframe 中实时预览。
+基于对 Atoms.dev 的深度使用体验，我认为以下功能对于一个 AI Agent 代码生成平台的 MVP 来说是最关键的：
 
-```
-React SPA (Vite + TypeScript)
-  ├── Gemini 2.5 Pro API  ← 浏览器直调（CORS 支持）
-  ├── Supabase            ← Auth + PostgreSQL + RLS
-  └── Vercel              ← 自动部署
-```
+**基础能力层**：登录认证、代码生成、产物展示（实时预览）、下载导出、GitHub 推送——这是最小可用产品的底线。
 
-### 关键取舍
+**Agent 核心能力层**：多轮上下文管理、用户记忆提取与注入、Team 模式（多 Agent 协作流水线）、Race 模式（并行对比）——这是从 Chatbot 到 Agent 的本质跃迁。
 
-**React + Vite vs Next.js**
-选 SPA 不选 SSR。理由：这是一个工具型应用，不需要 SEO，不需要服务端渲染。SPA 构建产物是纯静态文件，部署到 Vercel 零配置。Next.js 的 App Router 和 Server Components 在这个场景下是纯粹的复杂度负担。
+**交互设计层**：参考 Atoms 的一个重要设计决策——**隐藏模型选择、固定 Team 成员**。这是一个很好的 trade-off：降低上手门槛，让没有技术背景的用户也能快速使用。不需要理解 GPT-4 和 Claude 的区别，不需要知道产品经理 Agent 和工程师 Agent 该怎么配，直接告诉平台你想做什么就好。
 
-**iframe srcdoc vs WebContainer**
-选轻量方案。WebContainer 能跑完整 Node.js，但需要付费许可证、冷启动慢、内存占用高。AI 生成的代码是自包含 HTML（CSS/JS 全部内联），iframe srcdoc 零依赖、零延迟、够用。
+所以我的实现策略是：**优先保证这些核心功能能最小粒度跑起来**，而不是追求单个功能的完美度。
 
-**Supabase vs IndexedDB**
-选云端持久化。IndexedDB 是纯本地方案，换设备数据就没了。Supabase 提供真正的跨设备云存储 + 内置 Auth（Google OAuth 几行代码接入）+ RLS 行级安全。
+### 架构取舍
 
-**Gemini vs Claude/GPT**
-Gemini 支持浏览器直调（CORS），不需要后端代理。这让整个架构保持"零后端"的纯粹性。
+**纯前端 + Supabase + Vercel**：为了快速跑起来，整个项目几乎只有前端 TypeScript 代码。后端持久化直接使用 Supabase（Auth + PostgreSQL + RLS），部署用 Vercel（GitHub push 自动部署），挂在个人域名 `atomforge.charles-cheng.com` 上。零后端服务器，零运维成本。
 
-**Team Mode 串行 vs 并行**
-选串行。流水线的本质是上下文的逐步精化——架构师需要 PRD，工程师需要架构设计。并行会丢失协作语义。Race Mode 才是并行的正确场景。
+**Gemini 作为 LLM**：体验下来感觉 Gemini 的 coding 能力不是特别稳定——有时候生成的代码质量很高，有时候会出现结构不完整或者样式问题。但 Gemini 有一个关键优势：支持浏览器直调（CORS），不需要后端代理，和"纯前端架构"的定位完全契合。
+
+**iframe srcdoc 而不是 WebContainer**：WebContainer 能跑完整 Node.js，但需要付费许可证、冷启动慢。AI 生成的是自包含 HTML（CSS/JS 全部内联），iframe srcdoc 零依赖、即时渲染，Demo 阶段够用。
+
+**Team Mode 串行而不是并行**：流水线的本质是上下文的逐步精化——架构师需要产品经理的 PRD，工程师需要架构师的方案。串行保证了每一步的输入质量。Race Mode 才是并行的正确场景。
 
 ### 多 Agent 协作设计
 
-**Team Mode** — 5 个 Agent 串行流水线：
+**Team Mode** — 5 个固定角色串行流水线：
 ```
-Emma(PM) → Bob(架构) → Alex(工程) → Luna(测试) → Sarah(SEO)
+Emma(产品经理) → Bob(架构师) → Alex(工程师) → Luna(测试) → Sarah(SEO)
 ```
-每步输出自动串联为下一步的上下文输入。通过 `onStepUpdate` 回调实时向 UI 推送进度。
+每步输出自动串联为下一步的上下文。用户只需要描述需求，剩下的全自动。
 
-**Race Mode** — `Promise.allSettled()` 并行发起 3 个 Gemini 请求，每个独立流式输出，用户在 3 个 iframe 预览中对比选择。
+**Race Mode** — `Promise.allSettled()` 并行发起 3 个请求，每个独立流式输出，用户在 3 个 iframe 预览中对比选择最优方案。
+
+**Agent 记忆系统** — 从对话中自动提取用户偏好（技术栈、设计风格）和项目上下文，存入 Supabase，下次对话自动注入。让 Agent 逐渐"了解"用户。
 
 ### 开发方式
 
-使用 Claude Code 的 Sub-Agent 并行开发模式：
+使用 Claude Code 的 Sub-Agent 并行开发模式，总计 7 个 Sub-Agent，约 30 分钟完成初始版本：
 - 第一阶段：主 Agent 搭建脚手架、类型定义、路由
 - 第二阶段：3 个 Sub-Agent 并行（服务层 / 页面 UI / Workspace 核心）
 - 第三阶段：4 个 Sub-Agent 并行（文档 / Auth / 部署 / 代码审查）
-- 总计 7 个 Sub-Agent，约 30 分钟完成初始版本
 
 ---
 
@@ -56,49 +51,66 @@ Emma(PM) → Bob(架构) → Alex(工程) → Luna(测试) → Sarah(SEO)
 
 | 功能 | 说明 |
 |------|------|
-| Landing 页面 | 白色小清新主题、Agent 动物头像（SVG）、功能卡片、文档链接 |
-| 认证系统 | Google OAuth + Email/Password 注册登录 + Demo 模式 |
-| Dashboard | 项目创建/删除/跳转，Supabase 真实持久化（登录用户），Demo 模式 fallback |
+| 登录认证 | Google OAuth + Email/Password 注册登录 + Demo 模式 fallback |
+| Landing 页面 | 白色主题、Agent 动物头像（SVG）、功能卡片、文档链接 |
+| Dashboard | 默认对话入口（直接输入开始）+ 项目管理（创建/删除/跳转） |
 | Workspace 三栏布局 | Chat / Monaco Editor / Preview，可拖拽调整宽度 |
-| Engineer 模式 | Gemini 2.5 Pro 流式代码生成，自动提取 HTML 渲染到 Preview |
+| FileTree 折叠 | Editor tab 栏内置折叠按钮，一键隐藏/显示文件树 |
+| Engineer 模式 | Gemini 流式代码生成，多轮上下文（Gemini multi-turn chat） |
 | Team 模式 | 5 Agent 串行流水线，实时进度时间线，输出上下文串联 |
 | Race 模式 | 3 路并行生成，iframe 对比预览，选择最优方案 |
-| 代码编辑器 | Monaco Editor，多文件 Tab，vs-dark 主题，语法高亮 |
 | 实时预览 | iframe srcdoc，Desktop/Mobile 切换，macOS 风格标题栏 |
-| 文件树 | 新建/删除文件，扩展名图标 |
-| 数据持久化 | 对话记录、项目数据、生成产物全部存 Supabase（4 张表 + RLS） |
-| 平台感知 System Prompt | Agent 了解 AtomForge 的功能，能回答平台问题并附带文档链接 |
-| 文档系统 | 内置 /docs 页面（Product / Technical / Design Notes 三个 Tab） |
+| 代码编辑器 | Monaco Editor，多文件 Tab，语法高亮 |
+| Markdown 渲染 | 对话中支持加粗、斜体、代码块、列表、链接渲染 |
+| 平台感知 System Prompt | Agent 了解 AtomForge 功能，回答平台问题时附带文档链接 |
+| 用户记忆系统 | 自动提取偏好/事实/风格，存入 Supabase，下次对话注入 |
+| 数据持久化 | 对话记录、项目数据、生成产物全部存 Supabase（5 张表 + RLS） |
+| GitHub 推送 | 工具栏 Git 按钮，输入 Token + Repo 名一键推送代码 |
+| 下载导出 | 工具栏 Download 按钮，一键导出为 HTML 文件 |
+| 文档系统 | 内置 /docs 页面，中英双语，Product / Technical / Design Notes 三个 Tab |
 | 部署 | Vercel 自动部署 + 自定义域名 atomforge.charles-cheng.com |
+| AI 中文输出 | System Prompt 默认中文回复 |
+| 密钥安全 | Pre-commit hook 自动扫描 API Key 泄露 |
 
 ### 未完成
 
-| 功能 | 进度 | 说明 |
-|------|------|------|
-| GitHub 集成 UI | 服务层完成，UI 未接线 | `github.ts` 写好了 createRepo + pushToGithub，Workspace 的 Publish 按钮未对接 |
-| 版本回滚 | Schema 完成，UI 未实现 | versions 表已建，缺少版本列表和回滚按钮 |
-| 导出 ZIP | 未开始 | — |
-| 多模型切换 | 未开始 | Race 模式目前只用 Gemini，未来可支持 Claude/GPT 对比 |
-| 移动端适配 | Landing 基本适配，Workspace 未适配 | 三栏布局需要改为 Tab 切换 |
+| 功能 | 说明 |
+|------|------|
+| 代码版本快照 + 回滚 | Schema 已建，UI 未实现 |
+| 多模型支持 | 当前只用 Gemini，未来支持 Claude/GPT |
+| 优秀 Demo 案例展示 | 社区模板 / App World |
+| 移动端 Workspace 适配 | 三栏布局需要改为 Tab 切换 |
 
 ---
 
-## 三、扩展计划与优先级
+## 三、未来优化方向
 
-### P0 — 2~3 小时
-1. **GitHub 集成 UI** — Workspace Publish 按钮接入 github.ts，弹窗输入 token + repo 名
-2. **版本快照** — 每次代码生成自动存 version，UI 添加版本历史面板和回滚
+### 近期功能点
 
-### P1 — 3~4 小时
-3. **多模型支持** — 抽象 LLMProvider 接口，新增 OpenAI/Claude 实现，Race 模式支持跨模型对比
-4. **导出 ZIP** — 将当前文件打包下载
-5. **Workspace 移动端适配** — 三栏改为底部 Tab 切换
+**代码版本快照 + 回滚**
+每次 AI 生成代码后自动存储 version 快照。UI 上添加版本历史面板，点击即可回滚到任意历史版本。这在迭代过程中非常有价值——"刚才那个版本更好"是高频场景。
 
-### P2 — 未来方向
-6. **WebContainer** — 替换 iframe，支持 npm 包的完整预览
-7. **Supabase Realtime** — 多人实时协作
-8. **自定义 Agent** — 用户定义角色、prompt、流水线顺序
-9. **模板市场** — 社区共享生成的应用，支持 Fork/Remix
+**多模型支持 + 智能任务匹配**
+不只是让用户手动选模型，而是自动拆解任务并匹配：
+- Plan 和高难度架构任务 → 使用 SOTA 模型（Claude Opus、GPT-4o）
+- 简单代码生成 → 使用快速模型（Gemini Flash、Claude Haiku）
+- 代码审查 → 使用擅长分析的模型
+这样既保证质量又控制成本。
+
+**优秀 Demo 案例**
+内置一批高质量的生成案例，新用户一进来就能看到"这个平台能做什么"。支持一键 Fork/Remix，降低冷启动门槛。
+
+### 大方向思考
+
+现在我对 Atoms 这类产品的体感是：**Atoms 做对了"入门门槛足够低"这件事**。隐藏模型选择、固定 Team 成员、一句话开始构建——这些设计让完全没有技术背景的人也能用起来。
+
+但我观察到的趋势是，**未来 Agent 平台的发展方向可能是"入门易、进阶深"**：
+
+- **入门层**：保持现有的极简体验，一句话生成应用，不需要理解任何技术概念
+- **进阶层**：支持自定义 Team（用户定义 Agent 角色、System Prompt、流水线顺序）、支持自选模型、支持 Agent 间的条件分支和循环、支持接入外部 API/工具
+- **专家层**：开放 Agent SDK，让开发者可以编程式地编排复杂的 Agent 工作流
+
+这就像 Notion 的成功路径——看起来简单，但底层能力足够深。未来 Agent 平台的竞争壁垒不在于"AI 有多强"（这是模型层的事），而在于**编排层的灵活性和工程体验的打磨**。
 
 ---
 
@@ -108,10 +120,10 @@ Emma(PM) → Bob(架构) → Alex(工程) → Luna(测试) → Sarah(SEO)
 |------|------|
 | 前端 | React 18 + Vite + TypeScript |
 | 样式 | Tailwind CSS + Inline styles（白色主题） |
-| AI | Google Gemini 2.5 Pro（流式生成） |
+| AI | Google Gemini 2.5 Flash（流式生成、multi-turn chat） |
 | 认证 | Supabase Auth（Google OAuth + Email） |
-| 数据库 | Supabase PostgreSQL（RLS 行级安全） |
+| 数据库 | Supabase PostgreSQL（5 张表 + RLS 行级安全） |
 | 编辑器 | Monaco Editor |
 | 预览 | iframe srcdoc sandbox |
-| 部署 | Vercel（GitHub push 自动部署） |
+| 部署 | Vercel（GitHub push 自动部署）+ atomforge.charles-cheng.com |
 | 开发工具 | Claude Code（Agent Team 并行开发） |
