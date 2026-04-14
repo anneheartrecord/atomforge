@@ -82,31 +82,50 @@ export async function generateCode(
 }
 
 /**
- * 流式生成代码
+ * 流式生成代码（支持多轮对话上下文）
  */
 export async function streamGenerateCode(
   prompt: string,
   onChunk: (text: string) => void,
-  context?: string
+  context?: string,
+  history?: Array<{ role: 'user' | 'model'; text: string }>
 ): Promise<string> {
   const model = genAI.getGenerativeModel({
     model: MODEL_NAME,
     systemInstruction: DEFAULT_SYSTEM_PROMPT,
   });
 
+  // 如果有历史对话，使用 Gemini 的 multi-turn chat
+  if (history && history.length > 0) {
+    const chat = model.startChat({
+      history: history.map(h => ({
+        role: h.role,
+        parts: [{ text: h.text }],
+      })),
+    });
+
+    const result = await chat.sendMessageStream(prompt);
+    let fullText = '';
+    for await (const chunk of result.stream) {
+      const chunkText = chunk.text();
+      fullText += chunkText;
+      onChunk(chunkText);
+    }
+    return fullText;
+  }
+
+  // 无历史时 fallback 到单次请求
   const fullPrompt = context
     ? `Context from previous steps:\n${context}\n\nUser request:\n${prompt}`
     : prompt;
 
   const result = await model.generateContentStream(fullPrompt);
-
   let fullText = '';
   for await (const chunk of result.stream) {
     const chunkText = chunk.text();
     fullText += chunkText;
     onChunk(chunkText);
   }
-
   return fullText;
 }
 

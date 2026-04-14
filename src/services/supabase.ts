@@ -163,3 +163,33 @@ export async function deleteArtifact(id: string): Promise<void> {
 
   if (error) throw new Error(`Failed to delete artifact: ${error.message}`);
 }
+
+// ======================== User Memory ========================
+
+export interface UserMemory {
+  id: string;
+  user_id: string;
+  category: string; // 'preference' | 'fact' | 'style' | 'context'
+  content: string;
+  created_at: string;
+}
+
+export async function getMemories(userId: string): Promise<UserMemory[]> {
+  const { data, error } = await supabase
+    .from('user_memory')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(50);
+
+  if (error) return []; // 表可能不存在，静默失败
+  return (data || []) as UserMemory[];
+}
+
+export async function addMemory(userId: string, category: string, content: string): Promise<void> {
+  await supabase.from('user_memory').insert({ user_id: userId, category, content }).select();
+}
+
+export async function deleteMemory(id: string): Promise<void> {
+  await supabase.from('user_memory').delete().eq('id', id);
+}

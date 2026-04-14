@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Rocket, ChevronDown, Send, Loader2 } from 'lucide-react';
+import { Rocket, ChevronDown, Send, Loader2, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import ChatPanel from '../components/workspace/ChatPanel';
 import CodeEditor from '../components/workspace/CodeEditor';
 import FileTree from '../components/workspace/FileTree';
@@ -10,7 +10,7 @@ import RaceView from '../components/race/RaceView';
 import { streamGenerateCode } from '../services/gemini';
 import { runTeamPipeline } from '../agents/teamOrchestrator';
 import { runRace } from '../agents/raceRunner';
-import { getConversations, addConversation, saveArtifact, getProject } from '../services/supabase';
+import { getConversations, addConversation, saveArtifact, getProject, getMemories, addMemory, getCurrentUser } from '../services/supabase';
 import type { ChatMessage, WorkspaceMode, TeamStep, RaceEntry } from '../types';
 
 // ── 默认文件（空，等 AI 生成后才出现）────────────────────
@@ -58,6 +58,50 @@ function useDraggablePanel(initialLeft: number, initialRight: number) {
 
   const centerW = 100 - leftW - rightW;
   return { containerRef, leftW, centerW, rightW, onMouseDown };
+}
+
+// ── 从对话中提取记忆（偏好、事实等）──────────────────────
+async function extractAndSaveMemory(userMsg: string, aiResponse: string) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) return;
+
+    // 简单的规则提取（不调用额外 AI，避免额外成本）
+    const memories: Array<{ category: string; content: string }> = [];
+
+    // 提取技术偏好：如果用户提到具体技术栈
+    const techPatterns = [
+      /(?:我(?:喜欢|习惯|偏好|想用|要用)).*?(react|vue|angular|tailwind|bootstrap|python|node|go|rust)/gi,
+      /(?:use|prefer|like|want).*?(react|vue|angular|tailwind|bootstrap|python|node|go|rust)/gi,
+    ];
+    for (const p of techPatterns) {
+      const m = userMsg.match(p);
+      if (m) memories.push({ category: 'preference', content: `用户偏好技术栈: ${m[0]}` });
+    }
+
+    // 提取风格偏好
+    const stylePatterns = [
+      /(?:我(?:喜欢|想要|偏好)).*?(?:暗色|深色|亮色|白色|简约|极简|现代|复古)/g,
+      /(?:dark|light|minimal|modern|retro|clean)\s*(?:theme|style|mode|design)/gi,
+    ];
+    for (const p of stylePatterns) {
+      const m = userMsg.match(p);
+      if (m) memories.push({ category: 'style', content: `设计偏好: ${m[0]}` });
+    }
+
+    // 提取项目上下文（如果用户提到公司/产品名）
+    if (/(?:我们公司|我的产品|我在做|我负责)(.{2,20})/.test(userMsg)) {
+      const match = userMsg.match(/(?:我们公司|我的产品|我在做|我负责)(.{2,20})/);
+      if (match) memories.push({ category: 'context', content: `项目背景: ${match[0]}` });
+    }
+
+    // 保存到 Supabase
+    for (const mem of memories) {
+      await addMemory(user.id, mem.category, mem.content);
+    }
+  } catch {
+    // 静默失败，记忆提取是增强功能
+  }
 }
 
 // ── 从 AI 响应中提取 HTML ────────────────────────────────
@@ -139,6 +183,7 @@ export default function Workspace() {
   const [isLoading, setIsLoading] = useState(false);
   const [teamSteps, setTeamSteps] = useState<TeamStep[]>(MOCK_TEAM_STEPS);
   const [raceEntries, setRaceEntries] = useState<RaceEntry[]>(MOCK_RACE_ENTRIES);
+  const [showFileTree, setShowFileTree] = useState(true);
 
   const { containerRef, leftW, centerW, rightW, onMouseDown } = useDraggablePanel(30, 35);
 
@@ -264,7 +309,33 @@ export default function Workspace() {
       return;
     }
 
-    // Engineer mode: stream generate
+    // Engineer mode: stream generate with conversation history
+    // Load user memories for context injection
+    let memoryContext = '';
+    try {
+      const user = await getCurrentUser();
+      if (user) {
+        const memories = await getMemories(user.id);
+        if (memories.length > 0) {
+          memoryContext = '\n\n[User Memory - extracted from previous conversations]\n' +
+            memories.map(m => `- [${m.category}] ${m.content}`).join('\n') + '\n';
+        }
+      }
+    } catch { /* ignore */ }
+
+    // Build history for Gemini multi-turn chat
+    const history = messages
+      .filter(m => !m.isStreaming && m.content)
+      .map(m => ({
+        role: (m.role === 'user' ? 'user' : 'model') as 'user' | 'model',
+        text: m.content,
+      }));
+
+    // Inject memory context into the first user message if available
+    const promptWithMemory = memoryContext
+      ? `${memoryContext}\n\nUser request: ${content}`
+      : content;
+
     const assistantMsg: ChatMessage = {
       id: crypto.randomUUID(),
       role: 'alex',
@@ -276,14 +347,14 @@ export default function Workspace() {
 
     try {
       let accumulated = '';
-      const fullResponse = await streamGenerateCode(content, (chunk) => {
+      const fullResponse = await streamGenerateCode(promptWithMemory, (chunk) => {
         accumulated += chunk;
         setMessages(prev => {
           const msgs = [...prev];
           msgs[msgs.length - 1] = { ...msgs[msgs.length - 1], content: accumulated };
           return msgs;
         });
-      });
+      }, undefined, history);
 
       // Finalize streaming
       setMessages(prev => {
@@ -306,6 +377,9 @@ export default function Workspace() {
       if (pid) {
         addConversation({ pid, role: 'alex', content: fullResponse, metadata: {} }).catch(console.error);
       }
+
+      // Extract and save user memory (preferences, facts)
+      extractAndSaveMemory(content, fullResponse).catch(console.error);
     } catch (err) {
       setMessages(prev => {
         const msgs = [...prev];
@@ -448,13 +522,28 @@ export default function Workspace() {
             }} />
           ) : (
             <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
-              <FileTree
-                files={files}
-                activeFile={activeFile}
-                onFileSelect={setActiveFile}
-                onAddFile={handleAddFile}
-                onDeleteFile={handleDeleteFile}
-              />
+              {/* FileTree toggle button */}
+              <button
+                onClick={() => setShowFileTree(!showFileTree)}
+                title={showFileTree ? 'Hide file tree' : 'Show file tree'}
+                style={{
+                  position: 'absolute', zIndex: 10, top: 60, left: showFileTree ? 170 : 8,
+                  width: 24, height: 24, borderRadius: 6, border: '1px solid #e2e8f0',
+                  background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.08)', transition: 'left 0.2s',
+                }}
+              >
+                {showFileTree ? <PanelLeftClose size={12} /> : <PanelLeftOpen size={12} />}
+              </button>
+              {showFileTree && (
+                <FileTree
+                  files={files}
+                  activeFile={activeFile}
+                  onFileSelect={setActiveFile}
+                  onAddFile={handleAddFile}
+                  onDeleteFile={handleDeleteFile}
+                />
+              )}
               <CodeEditor
                 files={files}
                 activeFile={activeFile}
