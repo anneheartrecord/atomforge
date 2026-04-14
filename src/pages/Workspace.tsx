@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Rocket, ChevronDown, Send, Loader2, Download, GitBranch } from 'lucide-react';
+import { Rocket, ChevronDown, Send, Loader2, Download, GitBranch, Code2, Eye, EyeOff } from 'lucide-react';
 import ChatPanel from '../components/workspace/ChatPanel';
 import CodeEditor from '../components/workspace/CodeEditor';
 import FileTree from '../components/workspace/FileTree';
@@ -146,8 +146,8 @@ function TeamPromptInput({ onSend, isLoading }: { onSend: (msg: string) => void;
   };
 
   return (
-    <div style={{ paddingLeft: 12, paddingRight: 12, paddingBottom: 12, paddingTop: 8, flexShrink: 0, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, padding: 8, borderRadius: 12, background: '#ffffff', border: '1px solid rgba(0,0,0,0.06)' }}>
+    <div style={{ paddingLeft: 12, paddingRight: 12, paddingBottom: 12, paddingTop: 8, flexShrink: 0, borderTop: '1px solid rgba(0,0,0,0.06)', background: '#ffffff' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, padding: 8, borderRadius: 12, background: '#f8fafc', border: '1px solid rgba(0,0,0,0.08)' }}>
         <textarea
           ref={textareaRef}
           value={input}
@@ -186,6 +186,8 @@ export default function Workspace() {
   const [raceEntries, setRaceEntries] = useState<RaceEntry[]>(MOCK_RACE_ENTRIES);
   const [showFileTree, setShowFileTree] = useState(true);
   const [showGithubModal, setShowGithubModal] = useState(false);
+  const [showEditor, setShowEditor] = useState(true);
+  const [showPreview, setShowPreview] = useState(true);
   const [ghToken, setGhToken] = useState('');
   const [ghRepo, setGhRepo] = useState('atomforge-output');
   const [ghStatus, setGhStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -583,6 +585,22 @@ export default function Workspace() {
               </div>
             )}
           </div>
+          {/* Editor toggle */}
+          <button
+            onClick={() => setShowEditor(prev => !prev)}
+            title={showEditor ? 'Hide Editor' : 'Show Editor'}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8, border: 'none', cursor: 'pointer', background: showEditor ? '#f8fafc' : '#e2e8f0', color: showEditor ? '#64748b' : '#3b82f6' }}
+          >
+            <Code2 size={14} />
+          </button>
+          {/* Preview toggle */}
+          <button
+            onClick={() => setShowPreview(prev => !prev)}
+            title={showPreview ? 'Hide Preview' : 'Show Preview'}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8, border: 'none', cursor: 'pointer', background: showPreview ? '#f8fafc' : '#e2e8f0', color: showPreview ? '#64748b' : '#3b82f6' }}
+          >
+            {showPreview ? <Eye size={14} /> : <EyeOff size={14} />}
+          </button>
           <button style={{ display: 'flex', alignItems: 'center', gap: 8, paddingLeft: 20, paddingRight: 20, paddingTop: 8, paddingBottom: 8, fontSize: 12, fontWeight: 500, borderRadius: 8, border: 'none', cursor: 'pointer', color: '#fff', background: '#3b82f6' }}>
             <Rocket size={14} />
             Publish
@@ -596,7 +614,11 @@ export default function Workspace() {
       {/* ─── 主体三栏 ─── */}
       <div ref={containerRef} style={{ display: 'flex', flex: 1, minHeight: 0 }}>
         {/* 左栏 – Chat / Team Pipeline */}
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden', width: `${leftW}%`, borderRight: '1px solid rgba(0,0,0,0.06)' }}>
+        <div style={{
+          display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden',
+          width: !showEditor && !showPreview ? '100%' : !showEditor ? `${leftW + centerW}%` : !showPreview ? `${leftW}%` : `${leftW}%`,
+          borderRight: (showEditor || showPreview) ? '1px solid rgba(0,0,0,0.06)' : 'none',
+        }}>
           {mode === 'team' ? (
             <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
               <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
@@ -617,57 +639,72 @@ export default function Workspace() {
         </div>
 
         {/* 拖拽手柄 left */}
-        <div
-          style={{ width: 4, cursor: 'col-resize', flexShrink: 0 }}
-          onMouseDown={onMouseDown('left')}
-        />
+        {showEditor && (
+          <div
+            style={{ width: 4, cursor: 'col-resize', flexShrink: 0 }}
+            onMouseDown={onMouseDown('left')}
+          />
+        )}
 
         {/* 中栏 – FileTree + Editor / Race View */}
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden', width: `${centerW}%` }}>
-          {mode === 'race' ? (
-            <RaceView entries={raceEntries} onSelect={id => {
-              const entry = raceEntries.find(e => e.id === id);
-              if (entry?.output) {
-                setFiles(prev => ({ ...prev, 'index.html': entry.output }));
-                if (pid) {
-                  saveArtifact(pid, 'index.html', entry.output, 'html').catch(console.error);
+        {showEditor && (
+          <div style={{
+            display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden',
+            width: !showPreview ? `${centerW + rightW}%` : `${centerW}%`,
+          }}>
+            {mode === 'race' ? (
+              <RaceView entries={raceEntries} onSelect={id => {
+                const entry = raceEntries.find(e => e.id === id);
+                if (entry?.output) {
+                  setFiles(prev => ({ ...prev, 'index.html': entry.output }));
+                  if (pid) {
+                    saveArtifact(pid, 'index.html', entry.output, 'html').catch(console.error);
+                  }
+                  setMode('engineer');
                 }
-                setMode('engineer');
-              }
-            }} />
-          ) : (
-            <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
-              {showFileTree && (
-                <FileTree
+              }} />
+            ) : (
+              <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
+                {showFileTree && (
+                  <FileTree
+                    files={files}
+                    activeFile={activeFile}
+                    onFileSelect={setActiveFile}
+                    onAddFile={handleAddFile}
+                    onDeleteFile={handleDeleteFile}
+                  />
+                )}
+                <CodeEditor
                   files={files}
                   activeFile={activeFile}
-                  onFileSelect={setActiveFile}
-                  onAddFile={handleAddFile}
-                  onDeleteFile={handleDeleteFile}
+                  onFileChange={setActiveFile}
+                  onContentChange={handleContentChange}
+                  onToggleFileTree={() => setShowFileTree(prev => !prev)}
+                  showFileTree={showFileTree}
                 />
-              )}
-              <CodeEditor
-                files={files}
-                activeFile={activeFile}
-                onFileChange={setActiveFile}
-                onContentChange={handleContentChange}
-                onToggleFileTree={() => setShowFileTree(prev => !prev)}
-                showFileTree={showFileTree}
-              />
-            </div>
-          )}
-        </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* 拖拽手柄 right */}
-        <div
-          style={{ width: 4, cursor: 'col-resize', flexShrink: 0 }}
-          onMouseDown={onMouseDown('right')}
-        />
+        {showEditor && showPreview && (
+          <div
+            style={{ width: 4, cursor: 'col-resize', flexShrink: 0 }}
+            onMouseDown={onMouseDown('right')}
+          />
+        )}
 
         {/* 右栏 – Preview */}
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden', width: `${rightW}%`, borderLeft: '1px solid rgba(0,0,0,0.06)' }}>
-          <Preview html={buildPreviewHtml()} title="my-project" />
-        </div>
+        {showPreview && (
+          <div style={{
+            display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden',
+            width: !showEditor ? `${centerW + rightW}%` : `${rightW}%`,
+            borderLeft: showEditor ? '1px solid rgba(0,0,0,0.06)' : 'none',
+          }}>
+            <Preview html={buildPreviewHtml()} title="my-project" />
+          </div>
+        )}
       </div>
     </div>
   );

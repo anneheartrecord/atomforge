@@ -1,6 +1,23 @@
 import { Loader2, Check, Minus } from 'lucide-react';
 import type { AgentConfig } from '../../types';
 
+function renderSimpleMarkdown(text: string): string {
+  let html = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/^### (.+)$/gm, '<h3 style="margin:6px 0 2px;font-size:12px;font-weight:600">$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2 style="margin:8px 0 2px;font-size:13px;font-weight:600">$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1 style="margin:8px 0 4px;font-size:14px;font-weight:700">$1</h1>')
+    .replace(/```[\w]*\n([\s\S]*?)```/g, '<pre style="background:#f1f5f9;padding:6px 10px;border-radius:4px;overflow-x:auto;font-size:11px;line-height:1.5"><code>$1</code></pre>')
+    .replace(/`([^`]+)`/g, '<code style="background:#f1f5f9;padding:1px 3px;border-radius:2px;font-size:11px">$1</code>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^[*-] (.+)$/gm, '<li style="margin-left:16px;list-style:disc">$1</li>')
+    .replace(/^\d+\. (.+)$/gm, '<li style="margin-left:16px;list-style:decimal">$1</li>')
+    .replace(/\n{2,}/g, '<br/><br/>');
+  return html;
+}
+
 interface AgentCardProps {
   agent: AgentConfig;
   status: 'idle' | 'working' | 'done';
@@ -53,11 +70,13 @@ export default function AgentCard({ agent, status, output }: AgentCardProps) {
         </div>
       </div>
 
-      {/* 已完成时显示摘要输出 */}
+      {/* 已完成时显示摘要输出（支持简易 markdown） */}
       {status === 'done' && output && (
-        <div className="mt-2 text-[11px] leading-relaxed" style={{ color: '#64748b' }}>
-          {output}
-        </div>
+        <div
+          className="mt-2 text-[11px] leading-relaxed"
+          style={{ color: '#64748b' }}
+          dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(output) }}
+        />
       )}
     </div>
   );

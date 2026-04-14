@@ -2,6 +2,23 @@ import { Check, Loader2, AlertCircle, Clock } from 'lucide-react';
 import type { TeamStep } from '../../types';
 import AgentCard from './AgentCard';
 
+function renderSimpleMarkdown(text: string): string {
+  let html = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/^### (.+)$/gm, '<h3 style="margin:6px 0 2px;font-size:12px;font-weight:600">$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2 style="margin:8px 0 2px;font-size:13px;font-weight:600">$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1 style="margin:8px 0 4px;font-size:14px;font-weight:700">$1</h1>')
+    .replace(/```[\w]*\n([\s\S]*?)```/g, '<pre style="background:#f1f5f9;padding:6px 10px;border-radius:4px;overflow-x:auto;font-size:11px;line-height:1.5"><code>$1</code></pre>')
+    .replace(/`([^`]+)`/g, '<code style="background:#f1f5f9;padding:1px 3px;border-radius:2px;font-size:11px">$1</code>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^[*-] (.+)$/gm, '<li style="margin-left:16px;list-style:disc">$1</li>')
+    .replace(/^\d+\. (.+)$/gm, '<li style="margin-left:16px;list-style:decimal">$1</li>')
+    .replace(/\n{2,}/g, '<br/><br/>');
+  return html;
+}
+
 interface TeamPipelineProps {
   steps: TeamStep[];
   currentStep?: number;
@@ -63,13 +80,13 @@ export default function TeamPipeline({ steps, currentStep }: TeamPipelineProps) 
                   output={isCurrent || step.status === 'completed' ? step.output : undefined}
                 />
 
-                {/* 运行中展开输出 */}
+                {/* 运行中展开输出（支持简易 markdown） */}
                 {step.status === 'running' && step.output && (
                   <div
                     className="animate-pulse"
                     style={{ marginTop: 8, padding: 12, borderRadius: 8, fontSize: 12, lineHeight: 1.6, background: '#ffffff', color: '#64748b', border: '1px solid rgba(255,255,255,0.04)' }}
                   >
-                    {step.output}
+                    <span dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(step.output) }} />
                     <span className="animate-pulse" style={{ display: 'inline-block', width: 6, height: 12, marginLeft: 2, borderRadius: 2, background: '#3b82f6' }} />
                   </div>
                 )}
