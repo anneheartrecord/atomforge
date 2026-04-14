@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Rocket, ChevronDown, Send, Loader2, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { Rocket, ChevronDown, Send, Loader2, Download, GitBranch } from 'lucide-react';
 import ChatPanel from '../components/workspace/ChatPanel';
 import CodeEditor from '../components/workspace/CodeEditor';
 import FileTree from '../components/workspace/FileTree';
@@ -11,6 +11,7 @@ import { streamGenerateCode } from '../services/gemini';
 import { runTeamPipeline } from '../agents/teamOrchestrator';
 import { runRace } from '../agents/raceRunner';
 import { getConversations, addConversation, saveArtifact, getProject, getMemories, addMemory, getCurrentUser } from '../services/supabase';
+import { createRepo, pushToGithub } from '../services/github';
 import type { ChatMessage, WorkspaceMode, TeamStep, RaceEntry } from '../types';
 
 // ── 默认文件（空，等 AI 生成后才出现）────────────────────
@@ -61,7 +62,7 @@ function useDraggablePanel(initialLeft: number, initialRight: number) {
 }
 
 // ── 从对话中提取记忆（偏好、事实等）──────────────────────
-async function extractAndSaveMemory(userMsg: string, aiResponse: string) {
+async function extractAndSaveMemory(userMsg: string, _aiResponse: string) {
   try {
     const user = await getCurrentUser();
     if (!user) return;
@@ -184,6 +185,11 @@ export default function Workspace() {
   const [teamSteps, setTeamSteps] = useState<TeamStep[]>(MOCK_TEAM_STEPS);
   const [raceEntries, setRaceEntries] = useState<RaceEntry[]>(MOCK_RACE_ENTRIES);
   const [showFileTree, setShowFileTree] = useState(true);
+  const [showGithubModal, setShowGithubModal] = useState(false);
+  const [ghToken, setGhToken] = useState('');
+  const [ghRepo, setGhRepo] = useState('atomforge-output');
+  const [ghStatus, setGhStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [ghMessage, setGhMessage] = useState('');
 
   const { containerRef, leftW, centerW, rightW, onMouseDown } = useDraggablePanel(30, 35);
 
@@ -468,6 +474,115 @@ export default function Workspace() {
 
         {/* 右：操作区 */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {/* Download 按钮 */}
+          <button
+            onClick={() => {
+              const fileKeys = Object.keys(files);
+              if (fileKeys.length === 0) return;
+              let output: string;
+              let filename: string;
+              if (fileKeys.length === 1 && fileKeys[0].endsWith('.html')) {
+                output = files[fileKeys[0]];
+                filename = 'atomforge-export.html';
+              } else {
+                // 多文件：将 CSS/JS inline 到 HTML 中
+                const html = files['index.html'] || '';
+                const css = files['style.css'] || '';
+                const js = files['script.js'] || '';
+                if (html) {
+                  output = html
+                    .replace(/<link[^>]*href="style\.css"[^>]*\/?>/,  `<style>${css}</style>`)
+                    .replace(/<script[^>]*src="script\.js"[^>]*><\/script>/, `<script>${js}<\/script>`);
+                } else {
+                  // 没有 index.html，把所有文件拼接
+                  output = fileKeys.map(k => `<!-- ${k} -->\n${files[k]}`).join('\n\n');
+                }
+                filename = 'atomforge-export.html';
+              }
+              const blob = new Blob([output], { type: 'text/html' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = filename;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+            title="Download as HTML"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8, border: 'none', cursor: 'pointer', background: '#f8fafc', color: '#64748b' }}
+          >
+            <Download size={14} />
+          </button>
+          {/* GitHub 推送按钮 */}
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => { setShowGithubModal(prev => !prev); setGhStatus('idle'); setGhMessage(''); }}
+              title="Push to GitHub"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8, border: 'none', cursor: 'pointer', background: '#f8fafc', color: '#64748b' }}
+            >
+              <GitBranch size={14} />
+            </button>
+            {showGithubModal && (
+              <div style={{
+                position: 'absolute', top: '100%', right: 0, marginTop: 8,
+                width: 320, padding: 16, borderRadius: 12, background: '#fff',
+                border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                zIndex: 50, display: 'flex', flexDirection: 'column', gap: 12,
+              }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>Push to GitHub</div>
+                <input
+                  type="password"
+                  placeholder="GitHub Personal Access Token"
+                  value={ghToken}
+                  onChange={e => setGhToken(e.target.value)}
+                  style={{ padding: '8px 12px', fontSize: 12, borderRadius: 8, border: '1px solid #e2e8f0', outline: 'none', width: '100%', boxSizing: 'border-box' }}
+                />
+                <input
+                  type="text"
+                  placeholder="Repository name"
+                  value={ghRepo}
+                  onChange={e => setGhRepo(e.target.value)}
+                  style={{ padding: '8px 12px', fontSize: 12, borderRadius: 8, border: '1px solid #e2e8f0', outline: 'none', width: '100%', boxSizing: 'border-box' }}
+                />
+                {ghMessage && (
+                  <div style={{ fontSize: 11, color: ghStatus === 'error' ? '#ef4444' : '#22c55e', wordBreak: 'break-all' }}>
+                    {ghMessage}
+                  </div>
+                )}
+                <button
+                  disabled={!ghToken || !ghRepo || ghStatus === 'loading'}
+                  onClick={async () => {
+                    setGhStatus('loading');
+                    setGhMessage('');
+                    try {
+                      // 获取当前用户名
+                      const userRes = await fetch('https://api.github.com/user', {
+                        headers: { Authorization: `Bearer ${ghToken}`, Accept: 'application/vnd.github+json' },
+                      });
+                      if (!userRes.ok) throw new Error('Invalid token');
+                      const userData = await userRes.json();
+                      const owner = userData.login;
+                      // 尝试创建仓库（如果已存在会报错，忽略）
+                      try { await createRepo(ghToken, ghRepo, 'Created by AtomForge'); } catch { /* repo may exist */ }
+                      const fullRepo = `${owner}/${ghRepo}`;
+                      const commitUrl = await pushToGithub(ghToken, fullRepo, files);
+                      setGhStatus('success');
+                      setGhMessage(`Pushed! ${commitUrl}`);
+                    } catch (err) {
+                      setGhStatus('error');
+                      setGhMessage(err instanceof Error ? err.message : 'Push failed');
+                    }
+                  }}
+                  style={{
+                    padding: '8px 16px', fontSize: 12, fontWeight: 500, borderRadius: 8,
+                    border: 'none', cursor: 'pointer', color: '#fff',
+                    background: (!ghToken || !ghRepo || ghStatus === 'loading') ? '#94a3b8' : '#0f172a',
+                  }}
+                >
+                  {ghStatus === 'loading' ? 'Pushing…' : 'Push to GitHub'}
+                </button>
+              </div>
+            )}
+          </div>
           <button style={{ display: 'flex', alignItems: 'center', gap: 8, paddingLeft: 20, paddingRight: 20, paddingTop: 8, paddingBottom: 8, fontSize: 12, fontWeight: 500, borderRadius: 8, border: 'none', cursor: 'pointer', color: '#fff', background: '#3b82f6' }}>
             <Rocket size={14} />
             Publish
@@ -522,19 +637,6 @@ export default function Workspace() {
             }} />
           ) : (
             <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
-              {/* FileTree toggle button */}
-              <button
-                onClick={() => setShowFileTree(!showFileTree)}
-                title={showFileTree ? 'Hide file tree' : 'Show file tree'}
-                style={{
-                  position: 'absolute', zIndex: 10, top: 60, left: showFileTree ? 170 : 8,
-                  width: 24, height: 24, borderRadius: 6, border: '1px solid #e2e8f0',
-                  background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.08)', transition: 'left 0.2s',
-                }}
-              >
-                {showFileTree ? <PanelLeftClose size={12} /> : <PanelLeftOpen size={12} />}
-              </button>
               {showFileTree && (
                 <FileTree
                   files={files}
@@ -549,6 +651,8 @@ export default function Workspace() {
                 activeFile={activeFile}
                 onFileChange={setActiveFile}
                 onContentChange={handleContentChange}
+                onToggleFileTree={() => setShowFileTree(prev => !prev)}
+                showFileTree={showFileTree}
               />
             </div>
           )}

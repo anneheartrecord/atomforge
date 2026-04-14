@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import Editor from '@monaco-editor/react';
-import { X } from 'lucide-react';
+import { X, FolderOpen, FolderClosed } from 'lucide-react';
 
 // ── 文件类型 → 语言映射 ──────────────────────────────────
 function langFromFile(name: string): string {
@@ -32,10 +32,12 @@ interface CodeEditorProps {
   activeFile: string;
   onFileChange: (file: string) => void;
   onContentChange: (file: string, content: string) => void;
+  onToggleFileTree?: () => void;
+  showFileTree?: boolean;
 }
 
 // ══════════════════════════════════════════════════════════
-export default function CodeEditor({ files, activeFile, onFileChange, onContentChange }: CodeEditorProps) {
+export default function CodeEditor({ files, activeFile, onFileChange, onContentChange, onToggleFileTree, showFileTree }: CodeEditorProps) {
   const language = useMemo(() => langFromFile(activeFile), [activeFile]);
   const content = files[activeFile] ?? '';
 
@@ -45,6 +47,21 @@ export default function CodeEditor({ files, activeFile, onFileChange, onContentC
       <div
         style={{ display: 'flex', alignItems: 'center', height: 40, flexShrink: 0, overflowX: 'auto', background: '#ffffff', borderBottom: '1px solid rgba(0,0,0,0.06)' }}
       >
+        {/* FileTree toggle button */}
+        {onToggleFileTree && (
+          <button
+            onClick={onToggleFileTree}
+            title={showFileTree ? 'Hide file tree' : 'Show file tree'}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: 36, height: '100%', flexShrink: 0,
+              border: 'none', borderRight: '1px solid rgba(0,0,0,0.06)',
+              cursor: 'pointer', background: 'transparent', color: '#64748b',
+            }}
+          >
+            {showFileTree ? <FolderOpen size={16} /> : <FolderClosed size={16} />}
+          </button>
+        )}
         {Object.keys(files).map(name => {
           const active = name === activeFile;
           return (
