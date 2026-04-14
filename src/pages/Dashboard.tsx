@@ -157,26 +157,24 @@ export default function Dashboard() {
     <div style={{ background: 'var(--color-bg-dark)', minHeight: '100vh' }}>
       <Header />
 
-      <main className="mx-auto max-w-7xl px-6 pt-24 pb-16">
+      <main style={{ maxWidth: 1280, marginLeft: 'auto', marginRight: 'auto', paddingLeft: 24, paddingRight: 24, paddingTop: 96, paddingBottom: 64 }}>
         {/* Title bar */}
-        <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div style={{ marginBottom: 32, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <h1
-              className="text-2xl font-bold"
-              style={{ color: 'var(--color-text-primary)' }}
+              style={{ color: 'var(--color-text-primary)', fontSize: 24, fontWeight: 700 }}
             >
               My Projects
             </h1>
             {isDemo && (
-              <span className="rounded-full px-2.5 py-0.5 text-xs font-medium" style={{ background: 'rgba(251,191,36,0.15)', color: '#f59e0b' }}>
+              <span style={{ background: 'rgba(251,191,36,0.15)', color: '#f59e0b', borderRadius: 9999, paddingLeft: 10, paddingRight: 10, paddingTop: 2, paddingBottom: 2, fontSize: 12, fontWeight: 500 }}>
                 Demo Mode
               </span>
             )}
           </div>
           <button
             onClick={() => setShowModal(true)}
-            className="flex cursor-pointer items-center gap-2 rounded-full border-none px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 active:scale-[0.98]"
-            style={{ background: 'var(--color-primary)' }}
+            style={{ display: 'flex', cursor: 'pointer', alignItems: 'center', gap: 8, borderRadius: 9999, border: 'none', paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10, fontSize: 14, fontWeight: 600, color: '#fff', background: 'var(--color-primary)' }}
           >
             <Plus size={16} />
             New Project
@@ -196,32 +194,35 @@ export default function Dashboard() {
           </div>
         ) : (
           /* 空状态 */
-          <div className="flex flex-col items-center justify-center py-32">
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 200px)' }}>
             <div
-              className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl"
               style={{
                 background: 'rgba(66,103,255,0.10)',
                 color: 'var(--color-primary)',
+                marginBottom: 16,
+                display: 'flex',
+                width: 64,
+                height: 64,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 16,
               }}
             >
               <FolderOpen size={28} />
             </div>
             <h3
-              className="mb-2 text-lg font-semibold"
-              style={{ color: 'var(--color-text-primary)' }}
+              style={{ color: 'var(--color-text-primary)', marginBottom: 12, fontSize: 18, fontWeight: 600 }}
             >
               No projects yet
             </h3>
             <p
-              className="mb-6 text-sm"
-              style={{ color: 'var(--color-text-secondary)' }}
+              style={{ color: 'var(--color-text-secondary)', marginBottom: 32, fontSize: 14 }}
             >
               Create your first project to get started
             </p>
             <button
               onClick={() => setShowModal(true)}
-              className="flex cursor-pointer items-center gap-2 rounded-full border-none px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-              style={{ background: 'var(--color-primary)' }}
+              style={{ display: 'flex', cursor: 'pointer', alignItems: 'center', gap: 8, borderRadius: 9999, border: 'none', paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10, fontSize: 14, fontWeight: 600, color: '#fff', background: 'var(--color-primary)' }}
             >
               <Plus size={16} />
               New Project

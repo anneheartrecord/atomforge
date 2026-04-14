@@ -31,33 +31,30 @@ export default function NewProjectModal({ isOpen, onClose, onCreate }: NewProjec
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center px-6"
-      style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+      style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
       onClick={onClose}
     >
       <div
-        className="glass relative w-full max-w-md"
-        style={{ borderRadius: 24, padding: '36px 32px' }}
+        className="glass"
+        style={{ position: 'relative', width: '100%', maxWidth: 448, borderRadius: 24, padding: 36 }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
         <button
-          className="absolute top-4 right-4 flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border-none"
-          style={{ background: 'transparent', color: 'var(--color-text-muted)' }}
+          style={{ position: 'absolute', top: 16, right: 16, display: 'flex', width: 32, height: 32, cursor: 'pointer', alignItems: 'center', justifyContent: 'center', borderRadius: 8, border: 'none', background: 'transparent', color: 'var(--color-text-muted)' }}
           onClick={onClose}
         >
           <X size={18} />
         </button>
 
         <h2
-          className="mb-6 text-xl font-bold"
-          style={{ color: 'var(--color-text-primary)' }}
+          style={{ color: 'var(--color-text-primary)', marginBottom: 24, fontSize: 20, fontWeight: 700 }}
         >
           New Project
         </h2>
 
         {/* Name */}
-        <label className="mb-1 block text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+        <label style={{ display: 'block', marginBottom: 8, fontSize: 14, color: 'var(--color-text-secondary)' }}>
           Project name <span style={{ color: '#FF6B6B' }}>*</span>
         </label>
         <input
@@ -65,16 +62,24 @@ export default function NewProjectModal({ isOpen, onClose, onCreate }: NewProjec
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="My Awesome App"
-          className="mb-5 w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--color-primary)]"
           style={{
+            width: '100%',
+            marginBottom: 20,
+            borderRadius: 12,
+            border: '1px solid var(--color-border)',
+            paddingLeft: 16,
+            paddingRight: 16,
+            paddingTop: 12,
+            paddingBottom: 12,
+            fontSize: 14,
+            outline: 'none',
             background: 'var(--color-bg-input)',
-            borderColor: 'var(--color-border)',
             color: 'var(--color-text-primary)',
           }}
         />
 
         {/* Description */}
-        <label className="mb-1 block text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+        <label style={{ display: 'block', marginBottom: 8, fontSize: 14, color: 'var(--color-text-secondary)' }}>
           Description
         </label>
         <textarea
@@ -82,47 +87,72 @@ export default function NewProjectModal({ isOpen, onClose, onCreate }: NewProjec
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Describe your project..."
           rows={3}
-          className="mb-5 w-full resize-none rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--color-primary)]"
           style={{
+            width: '100%',
+            marginBottom: 20,
+            resize: 'none',
+            borderRadius: 12,
+            border: '1px solid var(--color-border)',
+            paddingLeft: 16,
+            paddingRight: 16,
+            paddingTop: 12,
+            paddingBottom: 12,
+            fontSize: 14,
+            outline: 'none',
             background: 'var(--color-bg-input)',
-            borderColor: 'var(--color-border)',
             color: 'var(--color-text-primary)',
           }}
         />
 
         {/* Mode selector */}
-        <label className="mb-2 block text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+        <label style={{ display: 'block', marginBottom: 8, fontSize: 14, color: 'var(--color-text-secondary)' }}>
           Mode
         </label>
-        <div className="mb-6 flex gap-3">
+        <div style={{ display: 'flex', gap: 12, marginBottom: 32 }}>
           {modes.map((m) => (
             <button
               key={m.value}
               onClick={() => setMode(m.value)}
-              className="flex flex-1 cursor-pointer flex-col items-center gap-1 rounded-xl border px-3 py-3 text-center transition-all"
               style={{
-                background:
-                  mode === m.value ? m.color + '15' : 'var(--color-bg-input)',
-                borderColor:
-                  mode === m.value ? m.color + '60' : 'var(--color-border)',
-                color:
-                  mode === m.value ? m.color : 'var(--color-text-secondary)',
+                flex: 1,
+                display: 'flex',
+                cursor: 'pointer',
+                flexDirection: 'column' as const,
+                alignItems: 'center',
+                gap: 4,
+                borderRadius: 12,
+                border: `1px solid ${mode === m.value ? m.color + '60' : 'var(--color-border)'}`,
+                paddingLeft: 12,
+                paddingRight: 12,
+                paddingTop: 12,
+                paddingBottom: 12,
+                textAlign: 'center' as const,
+                background: mode === m.value ? m.color + '15' : 'var(--color-bg-input)',
+                color: mode === m.value ? m.color : 'var(--color-text-secondary)',
               }}
             >
-              <span className="text-sm font-semibold">{m.label}</span>
-              <span className="text-xs opacity-70">{m.desc}</span>
+              <span style={{ fontSize: 14, fontWeight: 600 }}>{m.label}</span>
+              <span style={{ fontSize: 12, opacity: 0.7 }}>{m.desc}</span>
             </button>
           ))}
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3">
+        <div style={{ display: 'flex', gap: 12 }}>
           <button
             onClick={onClose}
-            className="flex-1 cursor-pointer rounded-full border px-4 py-2.5 text-sm font-medium transition-opacity hover:opacity-80"
             style={{
+              flex: 1,
+              cursor: 'pointer',
+              borderRadius: 9999,
+              border: '1px solid var(--color-border)',
+              paddingLeft: 16,
+              paddingRight: 16,
+              paddingTop: 10,
+              paddingBottom: 10,
+              fontSize: 14,
+              fontWeight: 500,
               background: 'transparent',
-              borderColor: 'var(--color-border)',
               color: 'var(--color-text-secondary)',
             }}
           >
@@ -131,8 +161,21 @@ export default function NewProjectModal({ isOpen, onClose, onCreate }: NewProjec
           <button
             onClick={handleCreate}
             disabled={!name.trim()}
-            className="flex-1 cursor-pointer rounded-full border-none px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-            style={{ background: 'var(--color-primary)' }}
+            style={{
+              flex: 1,
+              cursor: name.trim() ? 'pointer' : 'not-allowed',
+              borderRadius: 9999,
+              border: 'none',
+              paddingLeft: 16,
+              paddingRight: 16,
+              paddingTop: 10,
+              paddingBottom: 10,
+              fontSize: 14,
+              fontWeight: 600,
+              color: '#fff',
+              background: 'var(--color-primary)',
+              opacity: name.trim() ? 1 : 0.4,
+            }}
           >
             Create
           </button>

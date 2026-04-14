@@ -86,10 +86,10 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-6" style={{ background: '#fafbff' }}>
-      <div className="pointer-events-none fixed inset-0" style={{ background: 'radial-gradient(ellipse 50% 40% at 50% 40%, rgba(59,130,246,0.05) 0%, transparent 70%)' }} />
+    <div style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', padding: '0 24px', background: '#fafbff' }}>
+      <div className="pointer-events-none" style={{ position: 'fixed', inset: 0, background: 'radial-gradient(ellipse 50% 40% at 50% 40%, rgba(59,130,246,0.05) 0%, transparent 70%)' }} />
 
-      <div className="glass relative z-10 w-full max-w-sm" style={{ borderRadius: 24, padding: '48px 36px' }}>
+      <div className="glass" style={{ position: 'relative', zIndex: 10, width: '100%', maxWidth: 384, borderRadius: 24, padding: '48px 36px' }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <span className="gradient-text" style={{ fontSize: 28, fontWeight: 700 }}>AtomForge</span>

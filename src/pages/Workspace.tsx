@@ -151,8 +151,8 @@ function TeamPromptInput({ onSend, isLoading }: { onSend: (msg: string) => void;
   };
 
   return (
-    <div className="px-3 pb-3 pt-2 shrink-0" style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-      <div className="flex items-end gap-2 p-2 rounded-xl" style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.06)' }}>
+    <div style={{ paddingLeft: 12, paddingRight: 12, paddingBottom: 12, paddingTop: 8, flexShrink: 0, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, padding: 8, borderRadius: 12, background: '#ffffff', border: '1px solid rgba(0,0,0,0.06)' }}>
         <textarea
           ref={textareaRef}
           value={input}
@@ -160,14 +160,12 @@ function TeamPromptInput({ onSend, isLoading }: { onSend: (msg: string) => void;
           onKeyDown={handleKeyDown}
           placeholder="Describe what the team should build…"
           rows={1}
-          className="flex-1 bg-transparent text-sm resize-none outline-none placeholder:text-gray-600"
-          style={{ color: '#0f172a', maxHeight: '120px' }}
+          style={{ flex: 1, background: 'transparent', fontSize: 14, resize: 'none', outline: 'none', color: '#0f172a', maxHeight: 120, border: 'none' }}
         />
         <button
           onClick={handleSend}
           disabled={!input.trim() || isLoading}
-          className="p-2 rounded-lg transition-colors shrink-0 disabled:opacity-30"
-          style={{ background: '#3b82f6' }}
+          style={{ padding: 8, borderRadius: 8, flexShrink: 0, border: 'none', cursor: 'pointer', background: '#3b82f6', opacity: (!input.trim() || isLoading) ? 0.3 : 1 }}
         >
           {isLoading ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
         </button>
@@ -368,28 +366,29 @@ export default function Workspace() {
 
   // ── Render ────────────────────────────────────────────
   return (
-    <div className="flex flex-col h-screen" style={{ background: '#ffffff', color: '#0f172a' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#ffffff', color: '#0f172a' }}>
       {/* ─── 顶部工具栏 ─── */}
       <header
-        className="flex items-center justify-between px-5 h-13 shrink-0"
-        style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 20, paddingRight: 20, height: 52, flexShrink: 0, borderBottom: '1px solid rgba(0,0,0,0.06)' }}
       >
         {/* 左：项目名 */}
-        <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold" style={{ background: '#3b82f6' }}>⚛</div>
-          <span className="font-semibold text-sm">AtomForge</span>
-          <span className="text-xs" style={{ color: '#94a3b8' }}>/</span>
-          <span className="text-xs" style={{ color: '#64748b' }}>my-project</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 28, height: 28, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, background: '#3b82f6', color: '#fff' }}>⚛</div>
+          <span style={{ fontWeight: 600, fontSize: 14 }}>AtomForge</span>
+          <span style={{ fontSize: 12, color: '#94a3b8' }}>/</span>
+          <span style={{ fontSize: 12, color: '#64748b' }}>my-project</span>
         </div>
 
         {/* 中：模式切换 */}
-        <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: '#f1f5f9' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: 4, borderRadius: 12, background: '#f1f5f9' }}>
           {(['engineer', 'team', 'race'] as WorkspaceMode[]).map(m => (
             <button
               key={m}
               onClick={() => setMode(m)}
-              className="px-5 py-2 text-xs font-medium rounded-lg transition-all capitalize"
               style={{
+                paddingLeft: 20, paddingRight: 20, paddingTop: 8, paddingBottom: 8,
+                fontSize: 12, fontWeight: 500, borderRadius: 8, border: 'none', cursor: 'pointer',
+                textTransform: 'capitalize' as const,
                 background: mode === m ? '#3b82f6' : 'transparent',
                 color: mode === m ? '#fff' : '#64748b',
               }}
@@ -400,24 +399,24 @@ export default function Workspace() {
         </div>
 
         {/* 右：操作区 */}
-        <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 px-5 py-2 text-xs font-medium rounded-lg transition-colors text-white" style={{ background: '#3b82f6' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button style={{ display: 'flex', alignItems: 'center', gap: 8, paddingLeft: 20, paddingRight: 20, paddingTop: 8, paddingBottom: 8, fontSize: 12, fontWeight: 500, borderRadius: 8, border: 'none', cursor: 'pointer', color: '#fff', background: '#3b82f6' }}>
             <Rocket size={14} />
             Publish
           </button>
-          <button className="p-2 rounded-lg" style={{ background: '#f8fafc' }}>
+          <button style={{ padding: 8, borderRadius: 8, border: 'none', cursor: 'pointer', background: '#f8fafc' }}>
             <ChevronDown size={14} />
           </button>
         </div>
       </header>
 
       {/* ─── 主体三栏 ─── */}
-      <div ref={containerRef} className="flex flex-1 min-h-0">
+      <div ref={containerRef} style={{ display: 'flex', flex: 1, minHeight: 0 }}>
         {/* 左栏 – Chat / Team Pipeline */}
-        <div className="flex flex-col min-h-0 overflow-hidden" style={{ width: `${leftW}%`, borderRight: '1px solid rgba(0,0,0,0.06)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden', width: `${leftW}%`, borderRight: '1px solid rgba(0,0,0,0.06)' }}>
           {mode === 'team' ? (
-            <div className="flex flex-col h-full">
-              <div className="flex-1 min-h-0 overflow-y-auto">
+            <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
                 <TeamPipeline steps={teamSteps} currentStep={teamSteps.findIndex(s => s.status === 'running')} />
               </div>
               {/* Team 模式输入区 */}
@@ -436,18 +435,17 @@ export default function Workspace() {
 
         {/* 拖拽手柄 left */}
         <div
-          className="w-1 cursor-col-resize hover:bg-blue-500/30 transition-colors shrink-0"
+          style={{ width: 4, cursor: 'col-resize', flexShrink: 0 }}
           onMouseDown={onMouseDown('left')}
         />
 
         {/* 中栏 – FileTree + Editor / Race View */}
-        <div className="flex flex-col min-h-0 overflow-hidden" style={{ width: `${centerW}%` }}>
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden', width: `${centerW}%` }}>
           {mode === 'race' ? (
             <RaceView entries={raceEntries} onSelect={id => {
               const entry = raceEntries.find(e => e.id === id);
               if (entry?.output) {
                 setFiles(prev => ({ ...prev, 'index.html': entry.output }));
-                // 持久化到 Supabase
                 if (pid) {
                   saveArtifact(pid, 'index.html', entry.output, 'html').catch(console.error);
                 }
@@ -455,7 +453,7 @@ export default function Workspace() {
               }
             }} />
           ) : (
-            <div className="flex flex-1 min-h-0">
+            <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
               <FileTree
                 files={files}
                 activeFile={activeFile}
@@ -475,12 +473,12 @@ export default function Workspace() {
 
         {/* 拖拽手柄 right */}
         <div
-          className="w-1 cursor-col-resize hover:bg-blue-500/30 transition-colors shrink-0"
+          style={{ width: 4, cursor: 'col-resize', flexShrink: 0 }}
           onMouseDown={onMouseDown('right')}
         />
 
         {/* 右栏 – Preview */}
-        <div className="flex flex-col min-h-0 overflow-hidden" style={{ width: `${rightW}%`, borderLeft: '1px solid rgba(0,0,0,0.06)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden', width: `${rightW}%`, borderLeft: '1px solid rgba(0,0,0,0.06)' }}>
           <Preview html={buildPreviewHtml()} title="my-project" />
         </div>
       </div>

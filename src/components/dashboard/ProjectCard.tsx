@@ -28,8 +28,10 @@ export default function ProjectCard({ project, onClick, onDelete }: ProjectCardP
 
   return (
     <div
-      className="group relative cursor-pointer transition-all duration-300"
+      className="group"
       style={{
+        position: 'relative',
+        cursor: 'pointer',
         background: 'var(--color-bg-card)',
         border: '1px solid var(--color-border)',
         borderRadius: 24,
@@ -53,8 +55,19 @@ export default function ProjectCard({ project, onClick, onDelete }: ProjectCardP
           e.stopPropagation();
           onDelete(project.id);
         }}
-        className="absolute right-4 top-4 flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border-none opacity-0 transition-all duration-200 group-hover:opacity-100"
+        className="opacity-0 group-hover:opacity-100"
         style={{
+          position: 'absolute',
+          right: 16,
+          top: 16,
+          display: 'flex',
+          width: 32,
+          height: 32,
+          cursor: 'pointer',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: 8,
+          border: 'none',
           background: 'rgba(255,107,107,0.1)',
           color: '#FF6B6B',
         }}
@@ -67,31 +80,27 @@ export default function ProjectCard({ project, onClick, onDelete }: ProjectCardP
 
       {/* Project name */}
       <h3
-        className="mb-2 truncate pr-8 text-base font-semibold"
-        style={{ color: 'var(--color-text-primary)' }}
+        style={{ color: 'var(--color-text-primary)', marginBottom: 8, paddingRight: 32, fontSize: 16, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
       >
         {project.name}
       </h3>
 
       {/* Description */}
       <p
-        className="mb-5 line-clamp-2 text-sm leading-relaxed"
-        style={{ color: 'var(--color-text-secondary)' }}
+        style={{ color: 'var(--color-text-secondary)', marginBottom: 20, fontSize: 14, lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const, overflow: 'hidden' }}
       >
         {project.description || 'No description'}
       </p>
 
       {/* Footer */}
-      <div className="flex items-center justify-between">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span
-          className="rounded-full px-3 py-1 text-xs font-medium capitalize"
-          style={{ background: badge.bg, color: badge.text }}
+          style={{ background: badge.bg, color: badge.text, borderRadius: 9999, paddingLeft: 12, paddingRight: 12, paddingTop: 4, paddingBottom: 4, fontSize: 12, fontWeight: 500, textTransform: 'capitalize' as const }}
         >
           {project.mode}
         </span>
         <span
-          className="flex items-center gap-1 text-xs"
-          style={{ color: 'var(--color-text-muted)' }}
+          style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--color-text-muted)' }}
         >
           <Clock size={12} />
           {timeAgo(project.updated_at)}

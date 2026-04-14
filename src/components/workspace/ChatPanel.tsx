@@ -86,15 +86,15 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
   const currentAgent = mode === 'engineer' ? 'alex' : undefined;
 
   return (
-    <div className="flex flex-col h-full">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* ── 顶栏 ── */}
-      <div className="flex items-center justify-between px-4 h-11 shrink-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
-        <div className="flex items-center gap-2 text-xs">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 16, paddingRight: 16, height: 44, flexShrink: 0, borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12 }}>
           <span style={{ color: '#64748b' }}>Mode:</span>
-          <span className="font-medium capitalize" style={{ color: '#3b82f6' }}>{mode}</span>
+          <span style={{ fontWeight: 500, textTransform: 'capitalize' as const, color: '#3b82f6' }}>{mode}</span>
         </div>
         {currentAgent && (
-          <div className="flex items-center gap-1.5 text-xs">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
             <span>{AGENT_META[currentAgent].avatar}</span>
             <span style={{ color: AGENT_META[currentAgent].color }}>{AGENT_META[currentAgent].name}</span>
           </div>
@@ -102,19 +102,18 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
       </div>
 
       {/* ── 消息列表 ── */}
-      <div ref={listRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-4">
-        {messages.map(msg => {
+      <div ref={listRef} style={{ flex: 1, overflowY: 'auto', paddingLeft: 16, paddingRight: 16, paddingTop: 12, paddingBottom: 12 }}>
+        {messages.map((msg, msgIdx) => {
           const isUser = msg.role === 'user';
           const meta = !isUser ? AGENT_META[msg.role as AgentRole] || AGENT_META.assistant : null;
 
           return (
-            <div key={msg.id} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[85%] ${isUser ? '' : 'flex gap-2.5'}`}>
+            <div key={msg.id} style={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start', marginBottom: msgIdx < messages.length - 1 ? 16 : 0 }}>
+              <div style={{ maxWidth: '85%', ...(isUser ? {} : { display: 'flex', gap: 10 }) }}>
                 {/* Agent 头像 */}
                 {!isUser && meta && (
                   <div
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-sm shrink-0 mt-0.5"
-                    style={{ background: `${meta.color}20`, border: `1px solid ${meta.color}40` }}
+                    style={{ width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, flexShrink: 0, marginTop: 2, background: `${meta.color}20`, border: `1px solid ${meta.color}40` }}
                   >
                     {meta.avatar}
                   </div>
@@ -123,13 +122,15 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
                 <div>
                   {/* Agent 名字 */}
                   {!isUser && meta && (
-                    <div className="text-[11px] mb-1 font-medium" style={{ color: meta.color }}>{meta.name}</div>
+                    <div style={{ fontSize: 11, marginBottom: 4, fontWeight: 500, color: meta.color }}>{meta.name}</div>
                   )}
 
                   {/* 气泡 */}
                   <div
-                    className="p-4 text-sm leading-relaxed"
                     style={{
+                      padding: 16,
+                      fontSize: 14,
+                      lineHeight: 1.6,
                       background: isUser ? 'rgba(59,130,246,0.08)' : '#f8fafc',
                       borderRadius: isUser ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
                       color: '#0f172a',
@@ -137,12 +138,12 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
                   >
                     {renderMarkdown(msg.content)}
                     {msg.isStreaming && (
-                      <span className="inline-block w-1.5 h-4 ml-0.5 animate-pulse rounded-sm" style={{ background: '#3b82f6' }} />
+                      <span className="animate-pulse" style={{ display: 'inline-block', width: 6, height: 16, marginLeft: 2, borderRadius: 2, background: '#3b82f6' }} />
                     )}
                   </div>
 
                   {/* 时间 */}
-                  <div className="text-[10px] mt-1" style={{ color: '#444' }}>
+                  <div style={{ fontSize: 10, marginTop: 4, color: '#444' }}>
                     {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
@@ -153,8 +154,8 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
 
         {/* 加载中指示 */}
         {isLoading && (
-          <div className="flex justify-start">
-            <div className="flex items-center gap-2 p-4 rounded-2xl text-xs" style={{ background: '#f8fafc', color: '#64748b' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: 16, borderRadius: 16, fontSize: 12, background: '#f8fafc', color: '#64748b' }}>
               <Loader2 size={14} className="animate-spin" />
               Thinking…
             </div>
@@ -163,18 +164,20 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
       </div>
 
       {/* ── 输入区 ── */}
-      <div className="p-4 shrink-0">
+      <div style={{ padding: 16, flexShrink: 0 }}>
         {/* 模式切换 */}
-        <div className="flex items-center gap-1 mb-2">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 8 }}>
           {(['engineer', 'team', 'race'] as WorkspaceMode[]).map(m => (
             <button
               key={m}
               onClick={() => onModeChange(m)}
-              className="px-3 py-1 text-[11px] rounded-lg capitalize transition-all"
               style={{
+                paddingLeft: 12, paddingRight: 12, paddingTop: 4, paddingBottom: 4,
+                fontSize: 11, borderRadius: 8, textTransform: 'capitalize' as const,
+                border: mode === m ? '1px solid #3b82f640' : '1px solid transparent',
                 background: mode === m ? '#3b82f620' : 'transparent',
                 color: mode === m ? '#3b82f6' : '#555',
-                border: mode === m ? '1px solid #3b82f640' : '1px solid transparent',
+                cursor: 'pointer',
               }}
             >
               {m}
@@ -182,7 +185,7 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
           ))}
         </div>
 
-        <div className="flex items-end gap-2 p-2 rounded-xl" style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.06)' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, padding: 8, borderRadius: 12, background: '#ffffff', border: '1px solid rgba(0,0,0,0.06)' }}>
           <textarea
             ref={textareaRef}
             value={input}
@@ -190,14 +193,12 @@ export default function ChatPanel({ messages, onSend, mode, onModeChange, isLoad
             onKeyDown={handleKeyDown}
             placeholder="Describe what you want to build…"
             rows={1}
-            className="flex-1 bg-transparent text-sm resize-none outline-none placeholder:text-gray-600"
-            style={{ color: '#0f172a', maxHeight: '160px' }}
+            style={{ flex: 1, background: 'transparent', fontSize: 14, resize: 'none', outline: 'none', color: '#0f172a', maxHeight: 160, border: 'none' }}
           />
           <button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
-            className="p-2 rounded-lg transition-colors shrink-0 disabled:opacity-30"
-            style={{ background: '#3b82f6' }}
+            style={{ padding: 8, borderRadius: 8, flexShrink: 0, border: 'none', cursor: 'pointer', background: '#3b82f6', opacity: (!input.trim() || isLoading) ? 0.3 : 1 }}
           >
             <Send size={14} />
           </button>
