@@ -12,7 +12,7 @@ const AGENT_META: Record<string, { name: string; avatar: string; color: string }
   assistant: { name: 'Assistant', avatar: '🤖', color: '#3b82f6' },
 };
 
-// ── 简易 Markdown 渲染 ───────────────────────────────────
+// ── Markdown 渲染 ───────────────────────────────────────
 function renderMarkdown(text: string) {
   // 拆分代码块
   const parts = text.split(/(```[\s\S]*?```)/g);
@@ -22,28 +22,36 @@ function renderMarkdown(text: string) {
       const lang = lines[0]?.trim() || '';
       const code = lang ? lines.slice(1).join('\n') : lines.join('\n');
       return (
-        <pre key={i} style={{ marginTop: 8, marginBottom: 8, padding: 12, borderRadius: 8, fontSize: 12, overflowX: 'auto', background: '#ffffff' }}>
+        <pre key={i} style={{ marginTop: 8, marginBottom: 8, padding: 12, borderRadius: 8, fontSize: 12, overflowX: 'auto', background: '#f1f5f9' }}>
           {lang && <div style={{ fontSize: 10, marginBottom: 4, color: '#94a3b8' }}>{lang}</div>}
           <code style={{ color: '#0f172a' }}>{code}</code>
         </pre>
       );
     }
-    // 行内 code
-    const inlineParts = part.split(/(`[^`]+`)/g);
-    return (
-      <span key={i}>
-        {inlineParts.map((ip, j) =>
-          ip.startsWith('`') && ip.endsWith('`') ? (
-            <code key={j} style={{ paddingLeft: 6, paddingRight: 6, paddingTop: 2, paddingBottom: 2, borderRadius: 4, fontSize: 12, background: '#f8fafc', color: '#c084fc' }}>
-              {ip.slice(1, -1)}
-            </code>
-          ) : (
-            <span key={j} style={{ whiteSpace: 'pre-wrap' }}>{ip}</span>
-          )
-        )}
-      </span>
-    );
+    // 处理行内 markdown：bold, italic, inline code, links, lists
+    return <span key={i} dangerouslySetInnerHTML={{ __html: inlineMarkdown(part) }} />;
   });
+}
+
+function inlineMarkdown(text: string): string {
+  return text
+    // Links [text](url) — 指向 /docs 而不是 github
+    .replace(/\[([^\]]+)\]\(https:\/\/github\.com\/anneheartrecord\/atomforge\/[^\)]*\)/g, '<a href="/docs" style="color:#3b82f6;text-decoration:underline">$1</a>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color:#3b82f6;text-decoration:underline">$1</a>')
+    // Bold **text**
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    // Italic *text*
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    // Inline code `text`
+    .replace(/`([^`]+)`/g, '<code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:12px;color:#6366f1">$1</code>')
+    // Numbered lists: 1. item
+    .replace(/^(\d+)\.\s+(.+)$/gm, '<div style="padding-left:16px;margin:4px 0"><span style="color:#94a3b8;margin-right:6px">$1.</span>$2</div>')
+    // Bullet lists: - item or * item
+    .replace(/^[\-\*]\s+(.+)$/gm, '<div style="padding-left:16px;margin:4px 0"><span style="color:#94a3b8;margin-right:6px">•</span>$1</div>')
+    // Headers (within chat messages, render as bold text)
+    .replace(/^#{1,3}\s+(.+)$/gm, '<div style="font-weight:700;margin:12px 0 6px;font-size:15px">$1</div>')
+    // Line breaks
+    .replace(/\n/g, '<br/>');
 }
 
 // ── Props ─────────────────────────────────────────────────
