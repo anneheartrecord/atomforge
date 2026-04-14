@@ -98,8 +98,9 @@ Deploy the `dist/` directory to Vercel, Netlify, Cloudflare Pages, or any static
 
 ## Documentation
 
-- [Product Documentation (Chinese)](./docs/PRODUCT.md)
-- [Technical Documentation (Chinese)](./docs/TECHNICAL.md)
+- [Technical Docs (EN)](./docs/TECHNICAL_EN.md) | [技术文档 (中文)](./docs/TECHNICAL.md)
+- [Implementation Notes (EN)](./docs/DESIGN_NOTES_EN.md) | [实现说明 (中文)](./docs/DESIGN_NOTES.md)
+- [Online Docs](https://atomforge.charles-cheng.com/docs)
 
 ## License
 

@@ -98,8 +98,9 @@ npm run build
 
 ## 文档
 
-- [产品文档](./docs/PRODUCT.md)
-- [技术文档](./docs/TECHNICAL.md)
+- [技术文档 (中文)](./docs/TECHNICAL.md) | [Technical Docs (EN)](./docs/TECHNICAL_EN.md)
+- [实现说明 (中文)](./docs/DESIGN_NOTES.md) | [Implementation Notes (EN)](./docs/DESIGN_NOTES_EN.md)
+- [在线文档](https://atomforge.charles-cheng.com/docs)
 
 ## License
 
