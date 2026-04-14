@@ -39,14 +39,12 @@ export default function Features() {
     <section style={{ padding: '128px 32px' }}>
       <div style={{ maxWidth: 960, margin: '0 auto' }}>
         <h2
-          className="text-center font-bold"
-          style={{ color: 'var(--color-text-primary)', fontSize: 36, marginBottom: 16 }}
+          style={{ color: 'var(--color-text-primary)', fontSize: 36, marginBottom: 16, textAlign: 'center', fontWeight: 700 }}
         >
           Everything you need
         </h2>
         <p
-          className="mx-auto max-w-lg text-center"
-          style={{ color: 'var(--color-text-secondary)', fontSize: 16, lineHeight: 1.7, marginBottom: 56 }}
+          style={{ color: 'var(--color-text-secondary)', fontSize: 16, lineHeight: 1.7, maxWidth: 520, margin: '0 auto 56px', textAlign: 'center' }}
         >
           From ideation to production-ready code, AtomForge handles the entire
           development lifecycle.

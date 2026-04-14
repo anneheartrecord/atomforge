@@ -48,14 +48,12 @@ export default function AgentShowcase() {
     <section style={{ background: 'var(--color-bg-dark)', padding: '128px 32px' }}>
       <div style={{ maxWidth: 1152, margin: '0 auto' }}>
         <h2
-          className="text-center font-bold tracking-tight"
-          style={{ color: 'var(--color-text-primary)', fontSize: 36, marginBottom: 16 }}
+          style={{ color: 'var(--color-text-primary)', fontSize: 36, marginBottom: 16, textAlign: 'center', fontWeight: 700 }}
         >
           Meet the <span className="gradient-text">Agents</span>
         </h2>
         <p
-          className="mx-auto max-w-lg text-center"
-          style={{ color: 'var(--color-text-secondary)', fontSize: 16, lineHeight: 1.7, marginBottom: 56 }}
+          style={{ color: 'var(--color-text-secondary)', fontSize: 16, lineHeight: 1.7, marginBottom: 56, maxWidth: 520, margin: '0 auto 56px', textAlign: 'center' }}
         >
           Each agent brings specialized expertise. Combine them in Team Mode or
           let them compete in Race Mode.

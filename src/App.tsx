@@ -3,6 +3,7 @@ import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Workspace from './pages/Workspace';
+import Docs from './pages/Docs';
 import AuthGuard from './components/auth/AuthGuard';
 import './index.css';
 
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/docs" element={<Docs />} />
         <Route path="/dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
         <Route path="/workspace/:id" element={<AuthGuard><Workspace /></AuthGuard>} />
         <Route path="*" element={<Navigate to="/" replace />} />

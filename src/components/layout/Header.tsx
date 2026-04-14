@@ -96,10 +96,8 @@ export default function Header() {
             Dashboard
           </Link>
 
-          <a
-            href="https://github.com/anneheartrecord/atomforge/blob/main/docs/PRODUCT.md"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/docs"
             className="flex items-center gap-1.5 text-sm no-underline transition-colors duration-200"
             style={{ color: 'var(--color-text-secondary)' }}
             onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-text-primary)')}
@@ -107,7 +105,7 @@ export default function Header() {
           >
             <FileText size={16} />
             Docs
-          </a>
+          </Link>
 
           {user ? (
             <div className="flex items-center gap-3">
