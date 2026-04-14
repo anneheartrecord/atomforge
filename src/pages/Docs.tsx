@@ -12,24 +12,48 @@ const tabs = [
 ];
 
 function renderMarkdown(md: string): string {
-  return md
-    .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre style="background:#f1f5f9;padding:16px;border-radius:8px;overflow-x:auto;font-size:13px;line-height:1.6;margin:16px 0"><code>$2</code></pre>')
-    .replace(/^#### (.+)$/gm, '<h4 style="font-size:16px;font-weight:600;margin:24px 0 8px;color:#0f172a">$1</h4>')
-    .replace(/^### (.+)$/gm, '<h3 style="font-size:18px;font-weight:600;margin:32px 0 12px;color:#0f172a">$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2 style="font-size:22px;font-weight:700;margin:40px 0 16px;color:#0f172a;padding-bottom:8px;border-bottom:1px solid #e2e8f0">$1</h2>')
-    .replace(/^# (.+)$/gm, '<h1 style="font-size:28px;font-weight:700;margin:0 0 24px;color:#0f172a">$1</h1>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/`([^`]+)`/g, '<code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:13px">$1</code>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color:#3b82f6;text-decoration:none">$1</a>')
-    .replace(/^- (.+)$/gm, '<li style="margin:4px 0;padding-left:4px">$1</li>')
-    .replace(/((?:<li[^>]*>.*<\/li>\n?)+)/g, '<ul style="list-style:disc;padding-left:24px;margin:8px 0">$1</ul>')
-    .replace(/\|(.+)\|/g, (match) => {
-      const cells = match.split('|').filter(c => c.trim());
-      if (cells.every(c => /^[-:\s]+$/.test(c))) return '';
-      return '<tr>' + cells.map(c => `<td style="padding:8px 12px;border-bottom:1px solid #e2e8f0">${c.trim()}</td>`).join('') + '</tr>';
-    })
-    .replace(/^(?!<[hulitdrap])((?!<).+)$/gm, '<p style="margin:8px 0;line-height:1.75">$1</p>')
-    .replace(/\n\n/g, '<br/>');
+  // 1. Code blocks
+  let html = md.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre style="background:#f1f5f9;padding:16px;border-radius:8px;overflow-x:auto;font-size:13px;line-height:1.6;margin:16px 0"><code>$2</code></pre>');
+
+  // 2. Tables — find blocks of | lines and wrap in <table>
+  html = html.replace(/((?:^\|.+\|$\n?)+)/gm, (tableBlock) => {
+    const rows = tableBlock.trim().split('\n').filter(r => r.trim());
+    let tableHtml = '<table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px">';
+    rows.forEach((row, i) => {
+      const cells = row.split('|').filter(c => c.trim());
+      if (cells.every(c => /^[-:\s]+$/.test(c))) return; // skip separator
+      const tag = i === 0 ? 'th' : 'td';
+      const bgStyle = i === 0 ? 'background:#f8fafc;font-weight:600;' : '';
+      tableHtml += '<tr>' + cells.map(c =>
+        `<${tag} style="padding:10px 14px;border:1px solid #e2e8f0;text-align:left;${bgStyle}">${c.trim()}</${tag}>`
+      ).join('') + '</tr>';
+    });
+    tableHtml += '</table>';
+    return tableHtml;
+  });
+
+  // 3. Headers
+  html = html.replace(/^#### (.+)$/gm, '<h4 style="font-size:16px;font-weight:600;margin:24px 0 8px;color:#0f172a">$1</h4>');
+  html = html.replace(/^### (.+)$/gm, '<h3 style="font-size:18px;font-weight:600;margin:32px 0 12px;color:#0f172a">$1</h3>');
+  html = html.replace(/^## (.+)$/gm, '<h2 style="font-size:22px;font-weight:700;margin:40px 0 16px;color:#0f172a;padding-bottom:8px;border-bottom:1px solid #e2e8f0">$1</h2>');
+  html = html.replace(/^# (.+)$/gm, '<h1 style="font-size:28px;font-weight:700;margin:0 0 24px;color:#0f172a">$1</h1>');
+
+  // 4. Inline formatting
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/`([^`]+)`/g, '<code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:13px">$1</code>');
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color:#3b82f6;text-decoration:none">$1</a>');
+
+  // 5. Lists
+  html = html.replace(/^- (.+)$/gm, '<li style="margin:4px 0;padding-left:4px">$1</li>');
+  html = html.replace(/((?:<li[^>]*>.*<\/li>\n?)+)/g, '<ul style="list-style:disc;padding-left:24px;margin:8px 0">$1</ul>');
+
+  // 6. Paragraphs (lines not already wrapped in HTML tags)
+  html = html.replace(/^(?!<[hulitdprat])((?!<).+)$/gm, '<p style="margin:8px 0;line-height:1.75">$1</p>');
+
+  // 7. Double newlines to breaks
+  html = html.replace(/\n\n/g, '<br/>');
+
+  return html;
 }
 
 // ── 双语文档内容 ──────────────────────────────────────────
@@ -276,135 +300,119 @@ npm run dev                  # http://localhost:5173
   design: {
     zh: `# AtomForge — 实现说明
 
-## 实现思路与关键取舍
+## 功能优先级判断
 
-### 为什么选 React + Vite 而不是 Next.js？
-SPA 足够——开发工具不需要 SEO。Vite 提供亚秒级 HMR。静态部署到 Vercel 零配置。
+基于对 Atoms.dev 的深度使用体验，我认为以下功能对 MVP 最关键：
 
-### 为什么用 iframe srcdoc 而不是 WebContainer？
-WebContainer 很强大但：(1) 需要付费许可证 (2) 冷启动慢 (3) 对单文件 HTML 预览来说过度设计。iframe srcdoc 零依赖、即时渲染。
+**基础能力层**：登录认证、代码生成、产物展示（实时预览）、下载导出、GitHub 推送。
 
-### 为什么用 Supabase 而不是 IndexedDB？
-真正的跨设备云端持久化。内置 Auth（Google OAuth 3 行代码接入）。RLS 实现数据隔离。免费额度充足。
+**Agent 核心能力层**：多轮上下文管理、用户记忆提取与注入、Team 模式（多 Agent 协作流水线）、Race 模式（并行对比）。
 
-### 为什么用 Gemini 而不是 Claude/GPT？
-Gemini 支持浏览器直调（CORS），不需要后端代理，保持零后端架构。
+**交互设计层**：参考 Atoms 的重要设计——**隐藏模型选择、固定 Team 成员**。降低上手门槛，让非技术用户也能快速使用。
 
-### 团队模式：串行 vs 并行？
-选择串行——每个 Agent 需要前一个 Agent 的输出作为上下文。并行会丢失"协作"语义，退化为赛马模式。
+## 架构取舍
 
-## 开发方式
+**纯前端 + Supabase + Vercel**：代码几乎只有前端 TS，后端持久化直接用 Supabase，部署在个人域名上。零后端、零运维。
 
-使用 **Claude Code Agent Team** 并行开发——7 个子 Agent：
+**Gemini 作为 LLM**：coding 能力不是特别稳定，但支持浏览器直调（CORS），和纯前端架构完全契合。
 
-| 阶段 | Agent | 产出 |
-|------|-------|------|
-| 初始化 | 主 Agent | 脚手架、配置、类型 |
-| 核心 | 3 个 Agent 并行 | 服务层 / 页面 / Workspace |
-| 收尾 | 4 个 Agent 并行 | 文档 / Auth / 部署 / 审查 |
+**iframe srcdoc**：WebContainer 需要付费许可且冷启动慢。AI 生成自包含 HTML，iframe srcdoc 零依赖、即时渲染。
 
-**总计：从零到生产构建约 30 分钟。**
+**Team Mode 串行**：流水线本质是上下文逐步精化，串行保证每步输入质量。Race Mode 才是并行的正确场景。
 
-## 当前完成程度
+## 当前完成功能
 
-### 已完成
-- Landing 页面（Agent 动物头像）
-- Google OAuth + 邮箱登录
-- Dashboard 项目管理
-- 三栏工作空间（Chat / Editor / Preview）
-- 团队模式（5 Agent 流水线）
-- 赛马模式（3 路并行）
-- Supabase 持久化
-- Vercel 部署 + 自定义域名
+| 功能 | 说明 |
+|------|------|
+| 登录认证 | Google OAuth + Email + Demo 模式 |
+| Dashboard | 默认对话入口 + 项目管理 |
+| 三栏 Workspace | Chat / Editor / Preview，可拖拽、FileTree 可折叠 |
+| Engineer 模式 | Gemini 流式生成 + 多轮上下文 |
+| Team 模式 | 5 Agent 串行流水线 |
+| Race 模式 | 3 路并行对比 |
+| 用户记忆 | 自动提取偏好/事实，下次对话注入 |
+| Markdown 渲染 | 加粗、代码块、列表、链接 |
+| GitHub 推送 | Token + Repo 一键推送 |
+| 下载导出 | 一键导出 HTML |
+| 数据持久化 | Supabase 5 张表 + RLS |
+| 文档系统 | /docs 中英双语 |
+| 部署 | Vercel + atomforge.charles-cheng.com |
 
-### 未完成
-- 版本回滚 UI
-- 导出 ZIP
-- 赛马模式多模型支持
-- 移动端适配 Workspace
+## 未来优化
 
-## 扩展计划
+**近期功能点**：
+- 代码版本快照 + 回滚
+- 多模型支持：自动拆解任务匹配模型（Plan/高难度 → SOTA 模型；低难度 → 快速模型）
+- 优秀 Demo 案例展示
 
-### P0（2-3h）
-1. GitHub 集成 UI
-2. 版本快照 + 回滚
+**大方向思考**：
 
-### P1（3-4h）
-3. 多模型支持
-4. 导出 ZIP
-5. 移动端适配
+Atoms 做对了"入门门槛足够低"——隐藏模型选择、固定 Team 成员。这是很好的 trade-off，尤其对没有技术背景的用户。
 
-### P2（未来）
-6. WebContainer 替换 iframe
-7. Supabase Realtime 多人协作
-8. 自定义 Agent
-9. 模板市场`,
+但未来 Agent 平台的方向可能是**"入门易、进阶深"**：
+- **入门层**：一句话生成应用，不需要理解技术概念
+- **进阶层**：自定义 Team、自选模型、Agent 间条件分支
+- **专家层**：Agent SDK，编程式编排复杂工作流
 
-    en: `# AtomForge — Design Notes
+竞争壁垒不在 AI 多强（模型层的事），在于**编排层的灵活性和工程体验的打磨**。`,
 
-## Key Decisions
+    en: `# AtomForge — Implementation Notes
 
-### Why React + Vite (not Next.js)?
-SPA is sufficient — no SEO needed for a dev tool. Vite gives sub-second HMR. Static deploy to Vercel is trivial.
+## Feature Priority
 
-### Why iframe srcdoc (not WebContainer)?
-WebContainer is powerful but: (1) needs paid license, (2) heavy cold start, (3) overkill for single-file HTML preview. iframe srcdoc is zero-dependency and instant.
+Based on deep usage of Atoms.dev, these features are critical for MVP:
 
-### Why Supabase (not IndexedDB)?
-Real cloud persistence across devices. Built-in Auth (Google OAuth in 3 lines). RLS for data isolation. Free tier is generous.
+**Foundation**: Login, code generation, live preview, download, GitHub push.
 
-### Why Gemini (not Claude/GPT)?
-Gemini supports browser-direct calls (CORS), so zero backend needed.
+**Agent Core**: Multi-turn context, user memory, Team Mode pipeline, Race Mode parallel comparison.
 
-### Team Mode: Serial vs Parallel?
-Serial by design — each agent needs the previous agent's output as context. Parallel would lose the "collaboration" semantic.
+**Interaction Design**: Following Atoms' key decision — **hiding model selection, fixing Team members**. Lowers entry barrier for non-technical users.
 
-## Development Process
+## Architecture Trade-offs
 
-Built with **Claude Code Agent Team** — 7 parallel sub-agents:
+**Pure frontend + Supabase + Vercel**: Almost entirely frontend TS. Backend persistence via Supabase. Zero servers, zero ops.
 
-| Phase | Agents | Output |
-|-------|--------|--------|
-| Init | Main agent | Scaffold, config, types |
-| Core | 3 agents parallel | Services / Pages / Workspace |
-| Polish | 4 agents parallel | Docs / Auth / Deploy / Review |
+**Gemini as LLM**: Coding capability not consistently stable, but supports browser-direct calls (CORS), fits pure frontend architecture.
 
-**Total: ~30 minutes from zero to production build.**
+**iframe srcdoc**: WebContainer needs paid license and slow cold starts. Self-contained HTML renders instantly in iframe.
 
-## Current Status
+**Team Mode serial**: Pipeline requires progressive context refinement. Race Mode is for parallel scenarios.
 
-### Done
-- Landing page with agent avatars
-- Google OAuth + Email login
-- Dashboard with CRUD
-- 3-panel workspace (Chat / Editor / Preview)
-- Team Mode (5-agent pipeline)
-- Race Mode (3-way parallel)
-- Supabase persistence
-- Vercel deploy + custom domain
+## Completed Features
 
-### Not Done
-- Version rollback UI
-- Export ZIP
-- Multi-model support in Race Mode
-- Mobile responsive workspace
+| Feature | Details |
+|---------|---------|
+| Auth | Google OAuth + Email + Demo mode |
+| Dashboard | Default chat entry + project CRUD |
+| 3-Panel Workspace | Chat / Editor / Preview, draggable, FileTree collapsible |
+| Engineer Mode | Gemini streaming + multi-turn context |
+| Team Mode | 5-agent serial pipeline |
+| Race Mode | 3-way parallel comparison |
+| User Memory | Auto-extract preferences, inject next time |
+| Markdown | Bold, code blocks, lists, links |
+| GitHub Push | Token + Repo one-click push |
+| Download | One-click HTML export |
+| Persistence | Supabase 5 tables + RLS |
+| Docs | /docs bilingual (CN/EN) |
+| Deploy | Vercel + atomforge.charles-cheng.com |
 
-## Expansion Plan
+## Future Directions
 
-### P0 (2-3h)
-1. GitHub Integration UI
-2. Version snapshots + rollback
+**Near-term**:
+- Version snapshots + rollback
+- Multi-model: auto task decomposition (complex → SOTA; simple → fast models)
+- Demo showcase gallery
 
-### P1 (3-4h)
-3. Multi-model support
-4. Export ZIP
-5. Mobile responsive
+**Big picture**:
 
-### P2 (Future)
-6. WebContainer to replace iframe
-7. Supabase Realtime multi-user
-8. Custom Agents
-9. Template marketplace`,
+Atoms got "low entry barrier" right — hidden model selection, fixed Team. Great trade-off for non-technical users.
+
+But future Agent platforms need **"easy to start, deep to master"**:
+- **Entry**: One sentence to generate an app
+- **Advanced**: Custom Teams, model selection, conditional branching
+- **Expert**: Agent SDK for programmatic orchestration
+
+Competitive moat isn't AI strength (model layer), it's **orchestration flexibility and engineering experience polish**.`,
   },
 };
 
